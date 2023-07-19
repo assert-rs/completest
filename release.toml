@@ -1,0 +1,3 @@
+owners = ["github:assert-rs:Maintainers"]
+dependent-version = "fix"
+allow-branch = ["main"]
