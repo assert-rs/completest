@@ -34,6 +34,12 @@ impl Term {
     }
 }
 
+impl Default for Term {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub trait Runtime {
     fn home(&self) -> &std::path::Path;
 
@@ -111,12 +117,11 @@ pub struct BashRuntime {
 impl BashRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join(".bashrc");
-        let config = format!(
-            "\
+        let config = "\
 PS1='% '
 . /etc/bash_completion
 "
-        );
+        .to_string();
         std::fs::write(&config_path, config)?;
 
         let path = build_path(bin_root);
@@ -174,8 +179,7 @@ pub struct FishRuntime {
 impl FishRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join("fish/config.fish");
-        let config = format!(
-            "\
+        let config = "\
 fish_config theme choose None
 set -U fish_greeting \"\"
 function fish_title
@@ -184,7 +188,7 @@ function fish_prompt
     printf '%% '
 end;
 "
-        );
+        .to_string();
         std::fs::write(config_path, config)?;
 
         let path = build_path(bin_root);
@@ -239,12 +243,11 @@ pub struct ElvishRuntime {
 impl ElvishRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join("elvish/rc.elv");
-        let config = format!(
-            "\
+        let config = "\
 set edit:rprompt = (constantly \"\")
 set edit:prompt = (constantly \"% \")
 "
-        );
+        .to_string();
         std::fs::write(&config_path, config)?;
 
         let path = build_path(bin_root);
