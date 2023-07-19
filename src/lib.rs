@@ -1,93 +1,327 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
-mod vterm;
+use std::ffi::OsStr;
+use std::ffi::OsString;
+use std::io::Read as _;
+use std::io::Write as _;
+use std::path::PathBuf;
+use std::process::Command;
+use std::time::Duration;
 
 use ptyprocess::PtyProcess;
-use std::{
-    io::{Read, Write},
-    process::Command,
-    time::Duration,
-};
-use vterm::Term;
 
-pub const WIDTH: u16 = 120;
-pub const HEIGHT: u16 = 60;
-pub const ZSH_TIMEOUT: Duration = Duration::from_millis(100);
-pub const BASH_TIMEOUT: Duration = Duration::from_millis(50);
-pub const FISH_TIMEOUT: Duration = Duration::from_millis(50);
-pub const ELVISH_TIMEOUT: Duration = Duration::from_millis(50);
-
-/// Do zsh completion test for this input
-///
-/// if `print` is `true` - print raw output and exit
-pub fn zsh_comptest(input: &str) -> anyhow::Result<String> {
-    zsh_comptest_with(input, 120)
+pub struct Term {
+    width: u16,
+    height: u16,
 }
 
-pub fn zsh_comptest_with(input: &str, width: u16) -> anyhow::Result<String> {
-    let cwd = std::env::current_dir()?;
-    let cwd = cwd.parent().unwrap().to_str().unwrap();
-    let path = format!("{}:{cwd}/target/release/examples", std::env::var("PATH")?,);
-    let mut command = Command::new("zsh");
-    command
-        .env("PATH", path)
-        .env("ZDOTDIR", format!("{cwd}/dotfiles"));
-    comptest(command, false, input, width, ZSH_TIMEOUT)
+impl Term {
+    pub fn new() -> Self {
+        Self {
+            width: 120,
+            height: 60,
+        }
+    }
+
+    pub fn width(mut self, width: u16) -> Self {
+        self.width = width;
+        self
+    }
+
+    pub fn height(mut self, height: u16) -> Self {
+        self.height = height;
+        self
+    }
 }
 
-pub fn bash_comptest(input: &str) -> anyhow::Result<String> {
-    let cwd = std::env::current_dir()?;
-    let cwd = cwd.parent().unwrap().to_str().unwrap();
-    let path = format!("{}:{cwd}/target/release/examples", std::env::var("PATH")?,);
-    let mut command = Command::new("bash");
-    command
-        .env("PATH", path)
-        .args(["--rcfile", &format!("{cwd}/dotfiles/.bashrc")]);
-    let echo = !input.contains("\t\t");
-    comptest(command, echo, input, 120, BASH_TIMEOUT)
+pub trait Runtime {
+    fn home(&self) -> &std::path::Path;
+
+    fn register(&self, name: &str, content: &str) -> std::io::Result<()>;
+
+    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String>;
 }
 
-pub fn fish_comptest(input: &str) -> anyhow::Result<String> {
-    let cwd = std::env::current_dir()?;
-    let cwd = cwd.parent().unwrap().to_str().unwrap();
-    let path = format!("{}:{cwd}/target/release/examples", std::env::var("PATH")?,);
-    let mut command = Command::new("fish");
-    command
-        .env("PATH", path)
-        .env("XDG_CONFIG_HOME", format!("{cwd}/dotfiles"));
-    comptest(command, false, input, 120, FISH_TIMEOUT)
+pub struct ZshRuntime {
+    path: OsString,
+    home: PathBuf,
+    timeout: Duration,
 }
 
-pub fn elvish_comptest(input: &str) -> anyhow::Result<String> {
-    let cwd = std::env::current_dir()?;
-    let cwd = cwd.parent().unwrap().to_str().unwrap();
-    let path = format!("{}:{cwd}/target/release/examples", std::env::var("PATH")?,);
-    let mut command = Command::new("elvish");
-    command
-        .env("PATH", path)
-        .env("XDG_CONFIG_HOME", format!("{cwd}/dotfiles"));
-    comptest(command, false, input, 120, ELVISH_TIMEOUT)
+impl ZshRuntime {
+    pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        let home_display = home.display();
+        let config_path = home.join(".zshenv");
+        let config = format!(
+            "\
+fpath=($fpath {home_display}/zsh)
+autoload -U +X compinit && compinit
+PS1='%% '
+"
+        );
+        std::fs::write(config_path, config)?;
+
+        let path = build_path(bin_root);
+
+        Ok(Self {
+            path,
+            home,
+            timeout: Duration::from_millis(100),
+        })
+    }
+
+    pub fn home(&self) -> &std::path::Path {
+        &self.home
+    }
+
+    pub fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+        let path = self.home.join(format!("zsh/_{name}"));
+        std::fs::write(path, content)
+    }
+
+    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        let mut command = Command::new("zsh");
+        command.env("PATH", &self.path).env("ZDOTDIR", &self.home);
+        let echo = false;
+        comptest(command, echo, input, term, self.timeout)
+    }
+}
+
+impl Runtime for ZshRuntime {
+    fn home(&self) -> &std::path::Path {
+        self.home()
+    }
+
+    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+        self.register(name, content)
+    }
+
+    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        self.complete(input, term)
+    }
+}
+
+pub struct BashRuntime {
+    path: OsString,
+    home: PathBuf,
+    config: PathBuf,
+    timeout: Duration,
+}
+
+impl BashRuntime {
+    pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        let config_path = home.join(".bashrc");
+        let config = format!(
+            "\
+PS1='% '
+. /etc/bash_completion
+"
+        );
+        std::fs::write(&config_path, config)?;
+
+        let path = build_path(bin_root);
+
+        Ok(Self {
+            path,
+            home,
+            config: config_path,
+            timeout: Duration::from_millis(50),
+        })
+    }
+
+    pub fn home(&self) -> &std::path::Path {
+        &self.home
+    }
+
+    pub fn register(&self, _name: &str, content: &str) -> std::io::Result<()> {
+        let mut file = std::fs::OpenOptions::new()
+            .append(true)
+            .open(&self.config)?;
+        writeln!(&mut file, "{content}")?;
+        Ok(())
+    }
+
+    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        let mut command = Command::new("zsh");
+        command
+            .env("PATH", &self.path)
+            .args([OsStr::new("--rcfile"), self.config.as_os_str()]);
+        let echo = !input.contains("\t\t");
+        comptest(command, echo, input, term, self.timeout)
+    }
+}
+
+impl Runtime for BashRuntime {
+    fn home(&self) -> &std::path::Path {
+        self.home()
+    }
+
+    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+        self.register(name, content)
+    }
+
+    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        self.complete(input, term)
+    }
+}
+
+pub struct FishRuntime {
+    path: OsString,
+    home: PathBuf,
+    timeout: Duration,
+}
+
+impl FishRuntime {
+    pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        let config_path = home.join("fish/config.fish");
+        let config = format!(
+            "\
+fish_config theme choose None
+set -U fish_greeting \"\"
+function fish_title
+end
+function fish_prompt
+    printf '%% '
+end;
+"
+        );
+        std::fs::write(config_path, config)?;
+
+        let path = build_path(bin_root);
+
+        Ok(Self {
+            path,
+            home,
+            timeout: Duration::from_millis(50),
+        })
+    }
+
+    pub fn home(&self) -> &std::path::Path {
+        &self.home
+    }
+
+    pub fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+        let path = self.home.join(format!("fish/completions/{name}.fish"));
+        std::fs::write(path, content)
+    }
+
+    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        let mut command = Command::new("zsh");
+        command
+            .env("PATH", &self.path)
+            .env("XDG_CONFIG_HOME", &self.home);
+        let echo = false;
+        comptest(command, echo, input, term, self.timeout)
+    }
+}
+
+impl Runtime for FishRuntime {
+    fn home(&self) -> &std::path::Path {
+        self.home()
+    }
+
+    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+        self.register(name, content)
+    }
+
+    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        self.complete(input, term)
+    }
+}
+
+pub struct ElvishRuntime {
+    path: OsString,
+    home: PathBuf,
+    config: PathBuf,
+    timeout: Duration,
+}
+
+impl ElvishRuntime {
+    pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        let config_path = home.join("elvish/rc.elv");
+        let config = format!(
+            "\
+set edit:rprompt = (constantly \"\")
+set edit:prompt = (constantly \"% \")
+"
+        );
+        std::fs::write(&config_path, config)?;
+
+        let path = build_path(bin_root);
+
+        Ok(Self {
+            path,
+            home,
+            config: config_path,
+            timeout: Duration::from_millis(50),
+        })
+    }
+
+    pub fn home(&self) -> &std::path::Path {
+        &self.home
+    }
+
+    pub fn register(&self, _name: &str, content: &str) -> std::io::Result<()> {
+        let mut file = std::fs::OpenOptions::new()
+            .append(true)
+            .open(&self.config)?;
+        writeln!(&mut file, "{content}")?;
+        Ok(())
+    }
+
+    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        let mut command = Command::new("zsh");
+        command
+            .env("PATH", &self.path)
+            .env("XDG_CONFIG_HOME", &self.home);
+        let echo = false;
+        comptest(command, echo, input, term, self.timeout)
+    }
+}
+
+impl Runtime for ElvishRuntime {
+    fn home(&self) -> &std::path::Path {
+        self.home()
+    }
+
+    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+        self.register(name, content)
+    }
+
+    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+        self.complete(input, term)
+    }
+}
+
+fn build_path(bin_root: PathBuf) -> OsString {
+    let mut path = bin_root.into_os_string();
+    if let Some(existing) = std::env::var_os("PATH") {
+        path.push(":");
+        path.push(existing);
+    }
+    path
 }
 
 fn comptest(
     command: Command,
     echo: bool,
     input: &str,
-    width: u16,
+    term: &Term,
     timeout: Duration,
-) -> anyhow::Result<String> {
+) -> std::io::Result<String> {
     // spawn a new process, pass it the input was.
     //
     // This triggers completion loading process which takes some time in shell so we should let it
     // run for some time
     let mut process = PtyProcess::spawn(command)?;
-    process.set_window_size(width, HEIGHT)?;
+    process.set_window_size(term.width, term.height)?;
     // for some reason bash does not produce anything with echo disabled...
     process.set_echo(echo, None)?;
 
-    let mut term = Term::new(width, HEIGHT);
-    let mut stream = process.get_raw_handle()?;
+    let mut parser = vt100::Parser::new(term.height, term.width, 0);
+    let screen = parser.screen().clone();
 
+    let mut stream = process.get_raw_handle()?;
     // pass the completion input
     write!(stream, "{}", input)?;
     stream.flush()?;
@@ -117,9 +351,9 @@ fn comptest(
         if buf.is_empty() {
             break;
         }
-        snd.send(())?;
-        // println!("\n\n{:?}", std::str::from_utf8(buf));
-        term.process(buf);
+        snd.send(())
+            .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
+        parser.process(buf);
     }
-    Ok(term.render())
+    Ok(screen.contents())
 }
