@@ -1,4 +1,5 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg(unix)]
 
 use std::ffi::OsStr;
 use std::ffi::OsString;

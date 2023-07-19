@@ -43,7 +43,7 @@ pre-release-replacements = [
 [features]
 default = []
 
-[dependencies]
+[target.'cfg(unix)'.dependencies]
 ptyprocess = "0.4.1"
 vt100 = "0.15.2"
 
