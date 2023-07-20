@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.0.3] - 2023-07-20
+
 ## [0.0.2] - 2023-07-20
 
 ## [0.0.1] - 2023-07-20
 
 <!-- next-url -->
-[Unreleased]: https://github.com/assert-rs/completest/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/assert-rs/completest/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/assert-rs/completest/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/assert-rs/completest/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/assert-rs/completest/compare/3ba75d4e53b79952a4c1771d88f2a22a53d1782d...v0.0.1
