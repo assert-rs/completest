@@ -271,6 +271,7 @@ function fish_prompt
 end;
 "
         .to_string();
+        std::fs::create_dir_all(config_path.parent().unwrap())?;
         std::fs::write(config_path, config)?;
 
         Ok(Self::with_home(bin_root, home))
@@ -339,6 +340,7 @@ set edit:rprompt = (constantly \"\")
 set edit:prompt = (constantly \"% \")
 "
         .to_string();
+        std::fs::create_dir_all(config_path.parent().unwrap())?;
         std::fs::write(config_path, config)?;
 
         Ok(Self::with_home(bin_root, home))
