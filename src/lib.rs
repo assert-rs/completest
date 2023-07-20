@@ -331,7 +331,6 @@ fn comptest(
     process.set_echo(echo, None)?;
 
     let mut parser = vt100::Parser::new(term.height, term.width, 0);
-    let screen = parser.screen().clone();
 
     let mut stream = process.get_raw_handle()?;
     // pass the completion input
@@ -367,5 +366,5 @@ fn comptest(
             .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
         parser.process(buf);
     }
-    Ok(screen.contents())
+    Ok(parser.screen().contents())
 }
