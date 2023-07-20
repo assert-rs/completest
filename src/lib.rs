@@ -68,6 +68,45 @@ pub trait Runtime {
     fn complete(&self, input: &str, term: &Term) -> std::io::Result<String>;
 }
 
+/// Runtime-selection of a [`Runtime`] of supported shells
+#[derive(Copy, Clone, Debug)]
+pub enum Shell {
+    Zsh,
+    Bash,
+    Fish,
+    Elvish,
+}
+
+impl Shell {
+    pub fn init(self, bin_root: PathBuf, home: PathBuf) -> std::io::Result<Box<dyn Runtime>> {
+        let runtime: Box<dyn Runtime> = match self {
+            Self::Zsh => Box::new(ZshRuntime::new(bin_root, home)?),
+            Self::Bash => Box::new(BashRuntime::new(bin_root, home)?),
+            Self::Fish => Box::new(FishRuntime::new(bin_root, home)?),
+            Self::Elvish => Box::new(ElvishRuntime::new(bin_root, home)?),
+        };
+        Ok(runtime)
+    }
+
+    pub fn with_home(self, bin_root: PathBuf, home: PathBuf) -> Box<dyn Runtime> {
+        match self {
+            Self::Zsh => Box::new(ZshRuntime::with_home(bin_root, home)),
+            Self::Bash => Box::new(BashRuntime::with_home(bin_root, home)),
+            Self::Fish => Box::new(FishRuntime::with_home(bin_root, home)),
+            Self::Elvish => Box::new(ElvishRuntime::with_home(bin_root, home)),
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Zsh => "zsh",
+            Self::Bash => "bash",
+            Self::Fish => "fish",
+            Self::Elvish => "elvish",
+        }
+    }
+}
+
 pub struct ZshRuntime {
     path: OsString,
     home: PathBuf,
