@@ -152,7 +152,7 @@ PS1='% '
     }
 
     pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
-        let mut command = Command::new("zsh");
+        let mut command = Command::new("bash");
         command
             .env("PATH", &self.path)
             .args([OsStr::new("--rcfile"), self.config.as_os_str()]);
@@ -217,7 +217,7 @@ end;
     }
 
     pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
-        let mut command = Command::new("zsh");
+        let mut command = Command::new("fish");
         command
             .env("PATH", &self.path)
             .env("XDG_CONFIG_HOME", &self.home);
@@ -282,7 +282,7 @@ set edit:prompt = (constantly \"% \")
     }
 
     pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
-        let mut command = Command::new("zsh");
+        let mut command = Command::new("elvish");
         command
             .env("PATH", &self.path)
             .env("XDG_CONFIG_HOME", &self.home);
