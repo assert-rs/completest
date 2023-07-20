@@ -194,7 +194,7 @@ PS1='% '
 . /etc/bash_completion
 "
         .to_string();
-        std::fs::write(&config_path, config)?;
+        std::fs::write(config_path, config)?;
 
         Ok(Self::with_home(bin_root, home))
     }
@@ -339,7 +339,7 @@ set edit:rprompt = (constantly \"\")
 set edit:prompt = (constantly \"% \")
 "
         .to_string();
-        std::fs::write(&config_path, config)?;
+        std::fs::write(config_path, config)?;
 
         Ok(Self::with_home(bin_root, home))
     }
