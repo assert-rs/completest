@@ -70,13 +70,17 @@ PS1='%% '
         );
         std::fs::write(config_path, config)?;
 
+        Ok(Self::with_home(bin_root, home))
+    }
+
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
         let path = build_path(bin_root);
 
-        Ok(Self {
+        Self {
             path,
             home,
             timeout: Duration::from_millis(100),
-        })
+        }
     }
 
     pub fn home(&self) -> &std::path::Path {
@@ -129,14 +133,19 @@ PS1='% '
         .to_string();
         std::fs::write(&config_path, config)?;
 
+        Ok(Self::with_home(bin_root, home))
+    }
+
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
+        let config_path = home.join(".bashrc");
         let path = build_path(bin_root);
 
-        Ok(Self {
+        Self {
             path,
             home,
             config: config_path,
             timeout: Duration::from_millis(50),
-        })
+        }
     }
 
     pub fn home(&self) -> &std::path::Path {
@@ -198,13 +207,17 @@ end;
         .to_string();
         std::fs::write(config_path, config)?;
 
+        Ok(Self::with_home(bin_root, home))
+    }
+
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
         let path = build_path(bin_root);
 
-        Ok(Self {
+        Self {
             path,
             home,
             timeout: Duration::from_millis(50),
-        })
+        }
     }
 
     pub fn home(&self) -> &std::path::Path {
@@ -259,14 +272,19 @@ set edit:prompt = (constantly \"% \")
         .to_string();
         std::fs::write(&config_path, config)?;
 
+        Ok(Self::with_home(bin_root, home))
+    }
+
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
+        let config_path = home.join("elvish/rc.elv");
         let path = build_path(bin_root);
 
-        Ok(Self {
+        Self {
             path,
             home,
             config: config_path,
             timeout: Duration::from_millis(50),
-        })
+        }
     }
 
     pub fn home(&self) -> &std::path::Path {
