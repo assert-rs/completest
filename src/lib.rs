@@ -1,3 +1,19 @@
+//! Run completions for your program
+//!
+//! # Example
+//!
+//! ```rust,no_run
+//! # use std::path::Path;
+//! # let bin_root = Path::new("").to_owned();
+//! # let completion_script = "";
+//! # let home = std::env::current_dir().unwrap();
+//! let term = completest::Term::new();
+//!
+//! let runtime = completest::BashRuntime::new(bin_root, home).unwrap();
+//! runtime.register("foo", completion_script).unwrap();
+//! let output = runtime.complete("foo \t\t", &term).unwrap();
+//! ```
+
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![cfg(unix)]
 
@@ -11,6 +27,7 @@ use std::time::Duration;
 
 use ptyprocess::PtyProcess;
 
+/// Terminal that shell's will run completions in
 pub struct Term {
     width: u16,
     height: u16,
@@ -44,8 +61,10 @@ impl Default for Term {
 pub trait Runtime {
     fn home(&self) -> &std::path::Path;
 
+    /// Register a completion script
     fn register(&self, name: &str, content: &str) -> std::io::Result<()>;
 
+    /// Get the output from typing `input` into the shell
     fn complete(&self, input: &str, term: &Term) -> std::io::Result<String>;
 }
 
@@ -87,11 +106,13 @@ PS1='%% '
         &self.home
     }
 
+    /// Register a completion script
     pub fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("zsh/_{name}"));
         std::fs::write(path, content)
     }
 
+    /// Get the output from typing `input` into the shell
     pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("zsh");
         command.env("PATH", &self.path).env("ZDOTDIR", &self.home);
@@ -152,6 +173,7 @@ PS1='% '
         &self.home
     }
 
+    /// Register a completion script
     pub fn register(&self, _name: &str, content: &str) -> std::io::Result<()> {
         let mut file = std::fs::OpenOptions::new()
             .append(true)
@@ -160,6 +182,7 @@ PS1='% '
         Ok(())
     }
 
+    /// Get the output from typing `input` into the shell
     pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("bash");
         command
@@ -224,11 +247,13 @@ end;
         &self.home
     }
 
+    /// Register a completion script
     pub fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("fish/completions/{name}.fish"));
         std::fs::write(path, content)
     }
 
+    /// Get the output from typing `input` into the shell
     pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("fish");
         command
@@ -291,6 +316,7 @@ set edit:prompt = (constantly \"% \")
         &self.home
     }
 
+    /// Register a completion script
     pub fn register(&self, _name: &str, content: &str) -> std::io::Result<()> {
         let mut file = std::fs::OpenOptions::new()
             .append(true)
@@ -299,6 +325,7 @@ set edit:prompt = (constantly \"% \")
         Ok(())
     }
 
+    /// Get the output from typing `input` into the shell
     pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("elvish");
         command
