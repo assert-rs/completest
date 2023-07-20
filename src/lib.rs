@@ -28,6 +28,7 @@ use std::time::Duration;
 use ptyprocess::PtyProcess;
 
 /// Terminal that shell's will run completions in
+#[derive(Debug)]
 pub struct Term {
     width: u16,
     height: u16,
@@ -107,6 +108,7 @@ impl Shell {
     }
 }
 
+#[derive(Debug)]
 pub struct ZshRuntime {
     path: OsString,
     home: PathBuf,
@@ -174,6 +176,7 @@ impl Runtime for ZshRuntime {
     }
 }
 
+#[derive(Debug)]
 pub struct BashRuntime {
     path: OsString,
     home: PathBuf,
@@ -246,6 +249,7 @@ impl Runtime for BashRuntime {
     }
 }
 
+#[derive(Debug)]
 pub struct FishRuntime {
     path: OsString,
     home: PathBuf,
@@ -317,6 +321,7 @@ impl Runtime for FishRuntime {
     }
 }
 
+#[derive(Debug)]
 pub struct ElvishRuntime {
     path: OsString,
     home: PathBuf,
