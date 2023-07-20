@@ -57,6 +57,8 @@ pub struct ZshRuntime {
 
 impl ZshRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        std::fs::create_dir_all(&home)?;
+
         let home_display = home.display();
         let config_path = home.join(".zshenv");
         let config = format!(
@@ -117,6 +119,8 @@ pub struct BashRuntime {
 
 impl BashRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        std::fs::create_dir_all(&home)?;
+
         let config_path = home.join(".bashrc");
         let config = "\
 PS1='% '
@@ -179,6 +183,8 @@ pub struct FishRuntime {
 
 impl FishRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        std::fs::create_dir_all(&home)?;
+
         let config_path = home.join("fish/config.fish");
         let config = "\
 fish_config theme choose None
@@ -243,6 +249,8 @@ pub struct ElvishRuntime {
 
 impl ElvishRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        std::fs::create_dir_all(&home)?;
+
         let config_path = home.join("elvish/rc.elv");
         let config = "\
 set edit:rprompt = (constantly \"\")
