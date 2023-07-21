@@ -9,7 +9,7 @@
 //! # let home = std::env::current_dir().unwrap();
 //! let term = completest::Term::new();
 //!
-//! let runtime = completest::BashRuntime::new(bin_root, home).unwrap();
+//! let mut runtime = completest::BashRuntime::new(bin_root, home).unwrap();
 //! runtime.register("foo", completion_script).unwrap();
 //! let output = runtime.complete("foo \t\t", &term).unwrap();
 //! ```
@@ -65,10 +65,10 @@ pub trait Runtime {
     fn home(&self) -> &std::path::Path;
 
     /// Register a completion script
-    fn register(&self, name: &str, content: &str) -> std::io::Result<()>;
+    fn register(&mut self, name: &str, content: &str) -> std::io::Result<()>;
 
     /// Get the output from typing `input` into the shell
-    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String>;
+    fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String>;
 }
 
 /// Runtime-selection of a [`Runtime`] of supported shells
@@ -150,14 +150,14 @@ PROMPT='%% '
     }
 
     /// Register a completion script
-    pub fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+    pub fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("zsh/_{name}"));
         std::fs::create_dir_all(path.parent().unwrap())?;
         std::fs::write(path, content)
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("zsh");
         command.env("PATH", &self.path).env("ZDOTDIR", &self.home);
         let echo = false;
@@ -170,11 +170,11 @@ impl Runtime for ZshRuntime {
         self.home()
     }
 
-    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+    fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         self.register(name, content)
     }
 
-    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         self.complete(input, term)
     }
 }
@@ -219,7 +219,7 @@ PS1='% '
     }
 
     /// Register a completion script
-    pub fn register(&self, _name: &str, content: &str) -> std::io::Result<()> {
+    pub fn register(&mut self, _name: &str, content: &str) -> std::io::Result<()> {
         let mut file = std::fs::OpenOptions::new()
             .append(true)
             .open(&self.config)?;
@@ -228,7 +228,7 @@ PS1='% '
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("bash");
         command
             .env("PATH", &self.path)
@@ -243,11 +243,11 @@ impl Runtime for BashRuntime {
         self.home()
     }
 
-    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+    fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         self.register(name, content)
     }
 
-    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         self.complete(input, term)
     }
 }
@@ -294,14 +294,14 @@ end;
     }
 
     /// Register a completion script
-    pub fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+    pub fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("fish/completions/{name}.fish"));
         std::fs::create_dir_all(path.parent().unwrap())?;
         std::fs::write(path, content)
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("fish");
         command
             .env("PATH", &self.path)
@@ -316,11 +316,11 @@ impl Runtime for FishRuntime {
         self.home()
     }
 
-    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+    fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         self.register(name, content)
     }
 
-    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         self.complete(input, term)
     }
 }
@@ -366,7 +366,7 @@ set edit:prompt = (constantly \"% \")
     }
 
     /// Register a completion script
-    pub fn register(&self, _name: &str, content: &str) -> std::io::Result<()> {
+    pub fn register(&mut self, _name: &str, content: &str) -> std::io::Result<()> {
         let mut file = std::fs::OpenOptions::new()
             .append(true)
             .open(&self.config)?;
@@ -375,7 +375,7 @@ set edit:prompt = (constantly \"% \")
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("elvish");
         command
             .env("PATH", &self.path)
@@ -390,11 +390,11 @@ impl Runtime for ElvishRuntime {
         self.home()
     }
 
-    fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
+    fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         self.register(name, content)
     }
 
-    fn complete(&self, input: &str, term: &Term) -> std::io::Result<String> {
+    fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         self.complete(input, term)
     }
 }
