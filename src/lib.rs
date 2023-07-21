@@ -18,13 +18,18 @@
 
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
+use std::ffi::OsString;
 use std::path::PathBuf;
 
+#[cfg(feature = "nu")]
+mod nu;
 #[cfg(unix)]
 mod pty;
 #[cfg(unix)]
 mod vtparser;
 
+#[cfg(feature = "nu")]
+pub use nu::*;
 #[cfg(unix)]
 pub use pty::*;
 
@@ -82,6 +87,8 @@ pub enum Shell {
     Fish,
     #[cfg(unix)]
     Elvish,
+    #[cfg(feature = "nu")]
+    Nu,
 }
 
 impl Shell {
@@ -95,6 +102,8 @@ impl Shell {
             Self::Fish => Box::new(FishRuntime::new(bin_root, home)?),
             #[cfg(unix)]
             Self::Elvish => Box::new(ElvishRuntime::new(bin_root, home)?),
+            #[cfg(feature = "nu")]
+            Self::Nu => Box::new(NuRuntime::new(bin_root, home)?),
         };
         Ok(runtime)
     }
@@ -109,6 +118,8 @@ impl Shell {
             Self::Fish => Box::new(FishRuntime::with_home(bin_root, home)),
             #[cfg(unix)]
             Self::Elvish => Box::new(ElvishRuntime::with_home(bin_root, home)),
+            #[cfg(feature = "nu")]
+            Self::Nu => Box::new(NuRuntime::with_home(bin_root, home)),
         }
     }
 
@@ -122,6 +133,17 @@ impl Shell {
             Self::Fish => "fish",
             #[cfg(unix)]
             Self::Elvish => "elvish",
+            #[cfg(feature = "nu")]
+            Self::Nu => "nu",
         }
     }
+}
+
+fn build_path(bin_root: PathBuf) -> OsString {
+    let mut path = bin_root.into_os_string();
+    if let Some(existing) = std::env::var_os("PATH") {
+        path.push(":");
+        path.push(existing);
+    }
+    path
 }

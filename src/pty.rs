@@ -8,6 +8,7 @@ use std::time::Duration;
 
 use ptyprocess::PtyProcess;
 
+use crate::build_path;
 use crate::vtparser;
 use crate::Runtime;
 use crate::Term;
@@ -302,15 +303,6 @@ impl Runtime for ElvishRuntime {
     fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         self.complete(input, term)
     }
-}
-
-fn build_path(bin_root: PathBuf) -> OsString {
-    let mut path = bin_root.into_os_string();
-    if let Some(existing) = std::env::var_os("PATH") {
-        path.push(":");
-        path.push(existing);
-    }
-    path
 }
 
 fn comptest(
