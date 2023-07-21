@@ -263,7 +263,6 @@ impl FishRuntime {
 
         let config_path = home.join("fish/config.fish");
         let config = "\
-fish_config theme choose None
 set -U fish_greeting \"\"
 function fish_title
 end
