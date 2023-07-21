@@ -1,3 +1,5 @@
+//! HACK: Provide our own `vt100::VTParser` to ensure the shell doesn't clear the completions
+
 use std::ops::{Index, IndexMut};
 use vte::ansi::{Handler, LineClearMode, Processor, Timeout};
 
