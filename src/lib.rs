@@ -294,6 +294,7 @@ end;
     /// Register a completion script
     pub fn register(&self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("fish/completions/{name}.fish"));
+        std::fs::create_dir_all(path.parent().unwrap())?;
         std::fs::write(path, content)
     }
 
