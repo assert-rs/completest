@@ -120,13 +120,11 @@ impl ZshRuntime {
         std::fs::create_dir_all(&home)?;
 
         let config_path = home.join(".zshenv");
-        let config = format!(
-            "\
+        let config = "\
 fpath=($fpath $ZDOTDIR/zsh)
 autoload -U +X compinit && compinit
 PS1='%% '
-"
-        );
+";
         std::fs::write(config_path, config)?;
 
         Ok(Self::with_home(bin_root, home))
