@@ -73,6 +73,7 @@ pub trait Runtime {
 
 /// Runtime-selection of a [`Runtime`] of supported shells
 #[derive(Copy, Clone, Debug)]
+#[non_exhaustive]
 pub enum Shell {
     Zsh,
     Bash,
