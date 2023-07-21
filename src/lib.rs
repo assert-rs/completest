@@ -119,11 +119,10 @@ impl ZshRuntime {
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         std::fs::create_dir_all(&home)?;
 
-        let home_display = home.display();
         let config_path = home.join(".zshenv");
         let config = format!(
             "\
-fpath=($fpath {home_display}/zsh)
+fpath=($fpath $ZDOTDIR/zsh)
 autoload -U +X compinit && compinit
 PS1='%% '
 "
