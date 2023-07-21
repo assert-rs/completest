@@ -27,6 +27,8 @@ use std::time::Duration;
 
 use ptyprocess::PtyProcess;
 
+mod vtparser;
+
 /// Terminal that shell's will run completions in
 #[derive(Debug)]
 pub struct Term {
@@ -419,7 +421,7 @@ fn comptest(
     // for some reason bash does not produce anything with echo disabled...
     process.set_echo(echo, None)?;
 
-    let mut parser = vt100::Parser::new(term.height, term.width, 0);
+    let mut parser = vtparser::VTParser::new(term.width, term.height);
 
     let mut stream = process.get_raw_handle()?;
     // pass the completion input
@@ -455,5 +457,5 @@ fn comptest(
             .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
         parser.process(buf);
     }
-    Ok(parser.screen().contents())
+    Ok(parser.render())
 }
