@@ -375,7 +375,7 @@ dependencies = [
  "nu-test-support",
  "ptyprocess",
  "reedline",
- "vte 0.11.1",
+ "vt100",
 ]
 
 [[package]]
@@ -3320,6 +3320,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
+name = "vt100"
+version = "0.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "84cd863bf0db7e392ba3bd04994be3473491b31e66340672af5d11943c6274de"
+dependencies = [
+ "itoa",
+ "log",
+ "unicode-width",
+ "vte 0.11.1",
+]
+
+[[package]]
 name = "vte"
 version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3337,7 +3349,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f5022b5fbf9407086c180e9557be968742d839e68346af7792b8592489732197"
 dependencies = [
  "arrayvec 0.7.4",
- "log",
  "utf8parse",
  "vte_generate_state_changes",
 ]

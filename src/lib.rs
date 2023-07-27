@@ -25,8 +25,6 @@ use std::path::PathBuf;
 mod nu;
 #[cfg(unix)]
 mod pty;
-#[cfg(unix)]
-mod vtparser;
 
 #[cfg(feature = "nu")]
 pub use nu::*;

@@ -9,7 +9,6 @@ use std::time::Duration;
 use ptyprocess::PtyProcess;
 
 use crate::build_path;
-use crate::vtparser;
 use crate::Runtime;
 use crate::Term;
 
@@ -322,7 +321,7 @@ fn comptest(
     // for some reason bash does not produce anything with echo disabled...
     process.set_echo(echo, None)?;
 
-    let mut parser = vtparser::VTParser::new(term.width, term.height);
+    let mut parser = vt100::Parser::new(term.height, term.width, 0);
 
     let mut stream = process.get_raw_handle()?;
     // pass the completion input
@@ -331,32 +330,47 @@ fn comptest(
 
     let (snd, rcv) = std::sync::mpsc::channel();
 
-    std::thread::spawn(move || {
-        // since we don't know when exactly shell is done completing the idea is to wait until
-        // something at all is produced, then wait for some duration since the last produced chunk.
-        rcv.recv().unwrap();
-        loop {
-            std::thread::sleep(timeout);
-            let mut cnt = 0;
-            while rcv.try_recv().is_ok() {
-                cnt += 1;
+    let shutdown = std::sync::atomic::AtomicBool::new(false);
+    let shutdown_ref = &shutdown;
+    std::thread::scope(|scope| {
+        scope.spawn(move || {
+            // since we don't know when exactly shell is done completing the idea is to wait until
+            // something at all is produced, then wait for some duration since the last produced chunk.
+            rcv.recv().unwrap();
+            loop {
+                std::thread::sleep(timeout);
+                let mut cnt = 0;
+                while rcv.try_recv().is_ok() {
+                    cnt += 1;
+                }
+                if cnt == 0 {
+                    break;
+                }
             }
-            if cnt == 0 {
+            shutdown_ref.store(true, std::sync::atomic::Ordering::SeqCst);
+            process.exit(false).unwrap();
+        });
+
+        let mut buf = [0; 2048];
+        while let Ok(n) = stream.read(&mut buf) {
+            if shutdown.load(std::sync::atomic::Ordering::SeqCst) {
+                // fish clears completions on process teardown
                 break;
             }
+            let buf = &buf[..n];
+            if buf.is_empty() {
+                break;
+            }
+            let _ = snd.send(());
+            parser.process(buf);
         }
-        process.exit(false).unwrap();
     });
-    let mut buf = [0; 2048];
 
-    while let Ok(n) = stream.read(&mut buf) {
-        let buf = &buf[..n];
-        if buf.is_empty() {
-            break;
-        }
-        snd.send(())
-            .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
-        parser.process(buf);
-    }
-    Ok(parser.render())
+    let content = parser.screen().contents();
+    let content = content
+        .lines()
+        .map(|l| l.trim())
+        .collect::<Vec<_>>()
+        .join("\n");
+    Ok(content)
 }
