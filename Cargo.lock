@@ -366,7 +366,7 @@ dependencies = [
 
 [[package]]
 name = "completest"
-version = "0.0.14"
+version = "0.0.15"
 dependencies = [
  "nu-cli",
  "nu-command",
