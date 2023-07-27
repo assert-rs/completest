@@ -34,17 +34,17 @@ PROMPT='%% '
 ";
         std::fs::write(config_path, config)?;
 
-        Ok(Self::with_home(bin_root, home))
+        Self::with_home(bin_root, home)
     }
 
-    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let path = build_path(bin_root);
 
-        Self {
+        Ok(Self {
             path,
             home,
             timeout: Duration::from_millis(100),
-        }
+        })
     }
 
     pub fn home(&self) -> &std::path::Path {
@@ -102,19 +102,19 @@ PS1='% '
         .to_string();
         std::fs::write(config_path, config)?;
 
-        Ok(Self::with_home(bin_root, home))
+        Self::with_home(bin_root, home)
     }
 
-    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join(".bashrc");
         let path = build_path(bin_root);
 
-        Self {
+        Ok(Self {
             path,
             home,
             config: config_path,
             timeout: Duration::from_millis(50),
-        }
+        })
     }
 
     pub fn home(&self) -> &std::path::Path {
@@ -181,17 +181,17 @@ end;
         std::fs::create_dir_all(config_path.parent().unwrap())?;
         std::fs::write(config_path, config)?;
 
-        Ok(Self::with_home(bin_root, home))
+        Self::with_home(bin_root, home)
     }
 
-    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let path = build_path(bin_root);
 
-        Self {
+        Ok(Self {
             path,
             home,
             timeout: Duration::from_millis(50),
-        }
+        })
     }
 
     pub fn home(&self) -> &std::path::Path {
@@ -252,19 +252,19 @@ set edit:prompt = (constantly \"% \")
         std::fs::create_dir_all(config_path.parent().unwrap())?;
         std::fs::write(config_path, config)?;
 
-        Ok(Self::with_home(bin_root, home))
+        Self::with_home(bin_root, home)
     }
 
-    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join("elvish/rc.elv");
         let path = build_path(bin_root);
 
-        Self {
+        Ok(Self {
             path,
             home,
             config: config_path,
             timeout: Duration::from_millis(50),
-        }
+        })
     }
 
     pub fn home(&self) -> &std::path::Path {

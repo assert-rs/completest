@@ -43,9 +43,10 @@ pre-release-replacements = [
 
 [features]
 default = []
-nu = ["dep:nu-cli", "dep:nu-command", "dep:nu-parser", "dep:nu-protocol", "dep:nu-test-support", "dep:reedline"]
+nu = ["dep:nu-cli", "dep:nu-command", "dep:nu-parser", "dep:nu-protocol", "dep:nu-test-support", "dep:reedline", "dep:dunce"]
 
 [dependencies]
+dunce = { version = "1.0.4", optional = true }
 nu-cli = { version = "0.78.0", optional = true }
 nu-command = { version = "0.78.0", optional = true }
 nu-parser = { version = "0.78.0", optional = true }

@@ -17,6 +17,9 @@ use crate::build_path;
 use crate::Runtime;
 use crate::Term;
 
+/// Nushell runtime
+///
+/// > **WARNING:** This will call `std::env::set_current_dir`
 #[derive(Debug)]
 #[cfg(feature = "nu")] // purely for rustdoc to pick it up
 pub struct NuRuntime {
@@ -33,12 +36,14 @@ impl NuRuntime {
         std::fs::create_dir_all(config_path.parent().unwrap())?;
         std::fs::write(config_path, config)?;
 
-        Ok(Self::with_home(bin_root, home))
+        Self::with_home(bin_root, home)
     }
 
-    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> Self {
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        let bin_root = dunce::canonicalize(bin_root)?;
+        let home = dunce::canonicalize(home)?;
         let path = build_path(bin_root);
-        Self { path, home }
+        Ok(Self { path, home })
     }
 
     pub fn home(&self) -> &std::path::Path {
