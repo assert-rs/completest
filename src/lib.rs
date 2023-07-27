@@ -63,7 +63,7 @@ impl Default for Term {
     }
 }
 
-pub trait Runtime {
+pub trait Runtime: std::fmt::Debug {
     fn home(&self) -> &std::path::Path;
 
     /// Register a completion script
