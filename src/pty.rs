@@ -34,6 +34,8 @@ PROMPT='%% '
 ";
         std::fs::write(config_path, config)?;
 
+        let _ = std::fs::remove_file(home.join(".zcompdump"));
+
         Self::with_home(bin_root, home)
     }
 
