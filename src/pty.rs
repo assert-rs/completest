@@ -63,6 +63,7 @@ PROMPT='%% '
     /// Get the output from typing `input` into the shell
     pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("zsh");
+        command.arg("--noglobalrcs");
         command.env("PATH", &self.path).env("ZDOTDIR", &self.home);
         let echo = false;
         comptest(command, echo, input, term, self.timeout)
