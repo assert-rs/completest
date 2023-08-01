@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- *(zsh)* Avoid reading global config
+
 ## [0.0.17] - 2023-07-31
 
 ## [0.0.16] - 2023-07-27
