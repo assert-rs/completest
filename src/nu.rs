@@ -5,7 +5,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use nu_cli::NuCompleter;
-use nu_command::create_default_context;
 use nu_parser::parse;
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
@@ -184,7 +183,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
     let path_len = path.len();
 
     // Create a new engine with default context
-    let mut engine_state = create_default_context();
+    let mut engine_state = EngineState::new();
 
     // New stack
     let mut stack = Stack::new();
