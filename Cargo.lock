@@ -341,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "completest"
-version = "0.0.18"
+version = "0.0.19"
 dependencies = [
  "dunce",
  "nu-cli",
