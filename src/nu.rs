@@ -133,9 +133,12 @@ fn external_completion(
     for completer in completers.values() {
         let (_, delta) = {
             let mut working_set = StateWorkingSet::new(&engine_state);
-            let (block, err) = parse(&mut working_set, None, completer.as_bytes(), false, &[]);
-            if let Some(err) = err {
-                return Err(std::io::Error::new(std::io::ErrorKind::Other, err));
+            let block = parse(&mut working_set, None, completer.as_bytes(), false);
+            if !working_set.parse_errors.is_empty() {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    working_set.parse_errors.remove(0),
+                ));
             }
 
             (block, working_set.render())
