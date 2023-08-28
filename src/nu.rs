@@ -5,7 +5,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use nu_cli::NuCompleter;
-use nu_command::create_default_context;
 use nu_parser::parse;
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
@@ -133,9 +132,12 @@ fn external_completion(
     for completer in completers.values() {
         let (_, delta) = {
             let mut working_set = StateWorkingSet::new(&engine_state);
-            let (block, err) = parse(&mut working_set, None, completer.as_bytes(), false, &[]);
-            if let Some(err) = err {
-                return Err(std::io::Error::new(std::io::ErrorKind::Other, err));
+            let block = parse(&mut working_set, None, completer.as_bytes(), false);
+            if !working_set.parse_errors.is_empty() {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    working_set.parse_errors.remove(0),
+                ));
             }
 
             (block, working_set.render())
@@ -181,7 +183,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
     let path_len = path.len();
 
     // Create a new engine with default context
-    let mut engine_state = create_default_context();
+    let mut engine_state = EngineState::new();
 
     // New stack
     let mut stack = Stack::new();
