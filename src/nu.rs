@@ -5,13 +5,13 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use nu_cli::NuCompleter;
-use nu_command::create_default_context;
+use nu_command::add_shell_command_context;
 use nu_parser::parse;
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
     Value,
 };
-use reedline::Completer as _;
+use reedline::Completer;
 
 use crate::build_path;
 use crate::Runtime;
@@ -184,7 +184,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
     let path_len = path.len();
 
     // Create a new engine with default context
-    let mut engine_state = create_default_context();
+    let mut engine_state = add_shell_command_context(nu_cmd_lang::create_default_context());
 
     // New stack
     let mut stack = Stack::new();
@@ -194,7 +194,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
         "PWD".to_string(),
         Value::String {
             val: pwd.clone(),
-            span: nu_protocol::Span::new(0, pwd.len()),
+            internal_span: nu_protocol::Span::new(0, pwd.len()),
         },
     );
 
@@ -203,7 +203,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
         "Path".to_string(),
         Value::String {
             val: path,
-            span: nu_protocol::Span::new(0, path_len),
+            internal_span: nu_protocol::Span::new(0, path_len),
         },
     );
 
@@ -212,7 +212,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
         "PATH".to_string(),
         Value::String {
             val: path,
-            span: nu_protocol::Span::new(0, path_len),
+            internal_span: nu_protocol::Span::new(0, path_len),
         },
     );
 
