@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.1.0] - 2023-10-16
+
 ### Fixes
 
 - Update nushell to 0.85
@@ -68,7 +70,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.1] - 2023-07-20
 
 <!-- next-url -->
-[Unreleased]: https://github.com/assert-rs/completest/compare/v0.0.20...HEAD
+[Unreleased]: https://github.com/assert-rs/completest/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/assert-rs/completest/compare/v0.0.20...v0.1.0
 [0.0.20]: https://github.com/assert-rs/completest/compare/v0.0.19...v0.0.20
 [0.0.19]: https://github.com/assert-rs/completest/compare/v0.0.18...v0.0.19
 [0.0.18]: https://github.com/assert-rs/completest/compare/v0.0.17...v0.0.18
