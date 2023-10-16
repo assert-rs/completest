@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- Update nushell to 0.85
+
 ## [0.0.20] - 2023-08-28
 
 ### Fixes
