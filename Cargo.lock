@@ -1522,9 +1522,9 @@ dependencies = [
  "nu-color-config",
  "nu-engine",
  "nu-parser",
- "nu-path",
+ "nu-path 0.85.0",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.85.0",
  "once_cell",
  "percent-encoding",
  "reedline",
@@ -1542,7 +1542,7 @@ dependencies = [
  "miette",
  "nu-engine",
  "nu-parser",
- "nu-path",
+ "nu-path 0.85.0",
  "nu-protocol",
 ]
 
@@ -1558,7 +1558,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.85.0",
  "shadow-rs",
 ]
 
@@ -1572,7 +1572,7 @@ dependencies = [
  "nu-engine",
  "nu-json",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.85.0",
  "serde",
 ]
 
@@ -1620,16 +1620,16 @@ dependencies = [
  "nu-cmd-base",
  "nu-color-config",
  "nu-engine",
- "nu-glob",
+ "nu-glob 0.85.0",
  "nu-json",
  "nu-parser",
- "nu-path",
+ "nu-path 0.85.0",
  "nu-pretty-hex",
  "nu-protocol",
  "nu-system",
  "nu-table",
  "nu-term-grid",
- "nu-utils",
+ "nu-utils 0.85.0",
  "num-format",
  "num-traits",
  "once_cell",
@@ -1672,10 +1672,10 @@ version = "0.85.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9dc995cf4ceef56e1c1da9be4b3dad071ce5099856f9ef44c24be948bf3e257b"
 dependencies = [
- "nu-glob",
- "nu-path",
+ "nu-glob 0.85.0",
+ "nu-path 0.85.0",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.85.0",
 ]
 
 [[package]]
@@ -1683,6 +1683,12 @@ name = "nu-glob"
 version = "0.85.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e705d43b870fdf69f84dab27d7058e25f4d461877a2fa4eff646e9b67dc7253b"
+
+[[package]]
+name = "nu-glob"
+version = "0.87.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09ad25ca0d9897bf0f0ee8b0b79d9581891d8708f4b6e545897b47e48da05b7f"
 
 [[package]]
 name = "nu-json"
@@ -1706,7 +1712,7 @@ dependencies = [
  "itertools 0.11.0",
  "log",
  "nu-engine",
- "nu-path",
+ "nu-path 0.85.0",
  "nu-protocol",
  "serde_json",
 ]
@@ -1716,6 +1722,17 @@ name = "nu-path"
 version = "0.85.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d37e0208e5bf0fa018c223f4ec8b7c9e00a9a382a307026dc19694b1bf9f3af"
+dependencies = [
+ "dirs-next",
+ "omnipath",
+ "pwd",
+]
+
+[[package]]
+name = "nu-path"
+version = "0.87.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1c14d0fcf9cae942ba8df9778f89d9e4ea62daaa3d05c5e222ed366bf683111"
 dependencies = [
  "dirs-next",
  "omnipath",
@@ -1744,9 +1761,9 @@ dependencies = [
  "indexmap",
  "lru",
  "miette",
- "nu-path",
+ "nu-path 0.85.0",
  "nu-system",
- "nu-utils",
+ "nu-utils 0.85.0",
  "num-format",
  "serde",
  "serde_json",
@@ -1784,7 +1801,7 @@ dependencies = [
  "nu-color-config",
  "nu-engine",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.85.0",
  "once_cell",
  "tabled",
 ]
@@ -1795,20 +1812,20 @@ version = "0.85.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1febd45856fa096831e72758d15c059022e273fa987ac37c822676e454a09bfc"
 dependencies = [
- "nu-utils",
+ "nu-utils 0.85.0",
  "unicode-width",
 ]
 
 [[package]]
 name = "nu-test-support"
-version = "0.85.0"
+version = "0.87.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa270029d0ed6c1b7c3548c7bb985432e4f0c7e18c4fc1dd23a1f37ca817c5d3"
+checksum = "13ac017ab7d64ffff53f8bd4ff943ef1e275aa8aad54fb98a0cff4a4ede811df"
 dependencies = [
  "hamcrest2",
- "nu-glob",
- "nu-path",
- "nu-utils",
+ "nu-glob 0.87.1",
+ "nu-path 0.87.1",
+ "nu-utils 0.87.1",
  "num-format",
  "tempfile",
  "which",
@@ -1826,6 +1843,21 @@ dependencies = [
  "num-format",
  "strip-ansi-escapes",
  "sys-locale",
+]
+
+[[package]]
+name = "nu-utils"
+version = "0.87.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2882bbce3815c3af8b73379ce82400f370e83d0a5879c4b30aedc8d0511fcb56"
+dependencies = [
+ "crossterm_winapi",
+ "log",
+ "lscolors",
+ "num-format",
+ "strip-ansi-escapes",
+ "sys-locale",
+ "unicase",
 ]
 
 [[package]]
@@ -2985,9 +3017,9 @@ dependencies = [
 
 [[package]]
 name = "unicase"
-version = "2.6.0"
+version = "2.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50f37be617794602aabbeee0be4f259dc1778fabe05e2d67ee8f79326d5cb4f6"
+checksum = "f7d2d4dafb69621809a81864c9c1b864479e1235c0dd4e199924b9742439ed89"
 dependencies = [
  "version_check",
 ]
