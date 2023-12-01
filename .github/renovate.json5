@@ -41,6 +41,20 @@
         '* * * * *',
       ],
     },
+    {
+      matchManagers: [
+        'cargo',
+      ],
+      matchPackageNames: [
+        'nu-cli',
+        'nu-command',
+        'nu-parser',
+        'nu-protocol',
+        'nu-test-support',
+        'nu-cmd-lang',
+      ],
+      groupName: 'nushell',
+    },
     // Goals:
     // - Keep version reqs low, ignoring compatible normal/build dependencies
     // - Take advantage of latest dev-dependencies
