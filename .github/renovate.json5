@@ -52,6 +52,7 @@
         'nu-protocol',
         'nu-test-support',
         'nu-cmd-lang',
+        'reedline',
       ],
       groupName: 'nushell',
     },
