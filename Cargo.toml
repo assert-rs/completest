@@ -47,13 +47,13 @@ nu = ["dep:nu-cli", "dep:nu-command", "dep:nu-parser", "dep:nu-protocol", "dep:n
 
 [dependencies]
 dunce = { version = "1.0.4", optional = true }
-nu-cli = { version = "0.85.0", optional = true }
-nu-command = { version = "0.85.0", optional = true }
-nu-parser = { version = "0.85.0", optional = true }
-nu-protocol = { version = "0.85.0", optional = true }
-nu-test-support = { version = "0.85.0", optional = true }
-nu-cmd-lang = { version = "0.85.0", optional = true }
-reedline = { version = "0.24.0", optional = true }
+nu-cli = { version = "0.88.1", optional = true }
+nu-command = { version = "0.88.1", optional = true }
+nu-parser = { version = "0.88.1", optional = true }
+nu-protocol = { version = "0.88.1", optional = true }
+nu-test-support = { version = "0.88.1", optional = true }
+nu-cmd-lang = { version = "0.88.1", optional = true }
+reedline = { version = "0.27.1", optional = true }
 
 [target.'cfg(unix)'.dependencies]
 ptyprocess = "0.4.1"
