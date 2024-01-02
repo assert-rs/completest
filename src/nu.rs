@@ -165,7 +165,7 @@ fn external_completion(
     // Change config adding the external completer
     let mut config = engine_state.get_config().clone();
     config.external_completer = Some(latest_block_id);
-    engine_state.set_config(&config);
+    engine_state.set_config(config);
 
     // Instantiate a new completer
     Ok(NuCompleter::new(Arc::new(engine_state), stack))
