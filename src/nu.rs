@@ -109,6 +109,10 @@ impl NuRuntime {
 }
 
 impl Runtime for NuRuntime {
+    fn name(&self) -> &'static str {
+        "nu"
+    }
+
     fn home(&self) -> &std::path::Path {
         self.home()
     }

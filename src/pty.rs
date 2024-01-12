@@ -71,6 +71,10 @@ PROMPT='%% '
 }
 
 impl Runtime for ZshRuntime {
+    fn name(&self) -> &'static str {
+        "zsh"
+    }
+
     fn home(&self) -> &std::path::Path {
         self.home()
     }
@@ -145,6 +149,10 @@ PS1='% '
 }
 
 impl Runtime for BashRuntime {
+    fn name(&self) -> &'static str {
+        "bash"
+    }
+
     fn home(&self) -> &std::path::Path {
         self.home()
     }
@@ -220,6 +228,10 @@ end;
 }
 
 impl Runtime for FishRuntime {
+    fn name(&self) -> &'static str {
+        "fish"
+    }
+
     fn home(&self) -> &std::path::Path {
         self.home()
     }
@@ -295,6 +307,10 @@ set edit:prompt = (constantly \"% \")
 }
 
 impl Runtime for ElvishRuntime {
+    fn name(&self) -> &'static str {
+        "elvish"
+    }
+
     fn home(&self) -> &std::path::Path {
         self.home()
     }

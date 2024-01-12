@@ -64,6 +64,8 @@ impl Default for Term {
 }
 
 pub trait Runtime: std::fmt::Debug {
+    fn name(&self) -> &'static str;
+
     fn home(&self) -> &std::path::Path;
 
     /// Register a completion script
