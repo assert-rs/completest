@@ -495,11 +495,6 @@ fn comptest(
     });
 
     let content = parser.screen().contents();
-    let content = content
-        .lines()
-        .map(|l| l.trim())
-        .collect::<Vec<_>>()
-        .join("\n");
     Ok(content)
 }
 
