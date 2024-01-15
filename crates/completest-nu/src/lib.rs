@@ -34,16 +34,17 @@ use nu_protocol::{
 use reedline::Completer;
 
 pub use completest::Runtime;
+pub use completest::RuntimeBuilder;
 pub use completest::Term;
 
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct NuRuntimeBuilder {}
 
-impl completest::RuntimeBuilder for NuRuntimeBuilder {
+impl RuntimeBuilder for NuRuntimeBuilder {
     type Runtime = NuRuntime;
 
-    fn name(&self) -> &'static str {
+    fn name() -> &'static str {
         "nu"
     }
 
@@ -153,10 +154,6 @@ impl NuRuntime {
 }
 
 impl Runtime for NuRuntime {
-    fn name(&self) -> &'static str {
-        "nu"
-    }
-
     fn home(&self) -> &std::path::Path {
         self.home()
     }

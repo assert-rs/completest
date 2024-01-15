@@ -30,16 +30,17 @@ use std::time::Duration;
 use ptyprocess::PtyProcess;
 
 pub use completest::Runtime;
+pub use completest::RuntimeBuilder;
 pub use completest::Term;
 
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct ZshRuntimeBuilder {}
 
-impl completest::RuntimeBuilder for ZshRuntimeBuilder {
+impl RuntimeBuilder for ZshRuntimeBuilder {
     type Runtime = ZshRuntime;
 
-    fn name(&self) -> &'static str {
+    fn name() -> &'static str {
         "zsh"
     }
 
@@ -117,10 +118,6 @@ PROMPT='%% '
 }
 
 impl Runtime for ZshRuntime {
-    fn name(&self) -> &'static str {
-        "zsh"
-    }
-
     fn home(&self) -> &std::path::Path {
         self.home()
     }
@@ -138,10 +135,10 @@ impl Runtime for ZshRuntime {
 #[non_exhaustive]
 pub struct BashRuntimeBuilder {}
 
-impl completest::RuntimeBuilder for BashRuntimeBuilder {
+impl RuntimeBuilder for BashRuntimeBuilder {
     type Runtime = BashRuntime;
 
-    fn name(&self) -> &'static str {
+    fn name() -> &'static str {
         "bash"
     }
 
@@ -221,10 +218,6 @@ PS1='% '
 }
 
 impl Runtime for BashRuntime {
-    fn name(&self) -> &'static str {
-        "bash"
-    }
-
     fn home(&self) -> &std::path::Path {
         self.home()
     }
@@ -242,10 +235,10 @@ impl Runtime for BashRuntime {
 #[non_exhaustive]
 pub struct FishRuntimeBuilder {}
 
-impl completest::RuntimeBuilder for FishRuntimeBuilder {
+impl RuntimeBuilder for FishRuntimeBuilder {
     type Runtime = FishRuntime;
 
-    fn name(&self) -> &'static str {
+    fn name() -> &'static str {
         "fish"
     }
 
@@ -326,10 +319,6 @@ end;
 }
 
 impl Runtime for FishRuntime {
-    fn name(&self) -> &'static str {
-        "fish"
-    }
-
     fn home(&self) -> &std::path::Path {
         self.home()
     }
@@ -347,10 +336,10 @@ impl Runtime for FishRuntime {
 #[non_exhaustive]
 pub struct ElvishRuntimeBuilder {}
 
-impl completest::RuntimeBuilder for ElvishRuntimeBuilder {
+impl RuntimeBuilder for ElvishRuntimeBuilder {
     type Runtime = ElvishRuntime;
 
-    fn name(&self) -> &'static str {
+    fn name() -> &'static str {
         "elvish"
     }
 
@@ -431,10 +420,6 @@ set edit:prompt = (constantly \"% \")
 }
 
 impl Runtime for ElvishRuntime {
-    fn name(&self) -> &'static str {
-        "elvish"
-    }
-
     fn home(&self) -> &std::path::Path {
         self.home()
     }
