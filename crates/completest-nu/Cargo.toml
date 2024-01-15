@@ -1,6 +1,6 @@
 [package]
 name = "completest-nu"
-version = "0.3.1"
+version = "0.4.0"
 description = "Run completions for your program"
 repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]
@@ -24,7 +24,7 @@ pre-release-replacements = [
 ]
 
 [dependencies]
-completest = { version = "0.3.1", path = "../../" }
+completest = { version = "0.4.0", path = "../../" }
 dunce = "1.0.4"
 nu-cli = "0.88.1"
 nu-command = "0.88.1"
