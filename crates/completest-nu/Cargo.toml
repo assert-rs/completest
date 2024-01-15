@@ -1,6 +1,7 @@
 [package]
 name = "completest-nu"
 version = "0.1.0"
+description = "Run completions for your program"
 repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]
 keywords = ["completion"]
