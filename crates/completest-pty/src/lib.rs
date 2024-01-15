@@ -1,3 +1,24 @@
+//! Run completions for your program
+//!
+//! # Example
+//!
+//! ```rust,no_run
+//! # #[cfg(unix)] {
+//! # use std::path::Path;
+//! # let bin_root = Path::new("").to_owned();
+//! # let completion_script = "";
+//! # let home = std::env::current_dir().unwrap();
+//! let term = completest_pty::Term::new();
+//!
+//! let mut runtime = completest_pty::BashRuntime::new(bin_root, home).unwrap();
+//! runtime.register("foo", completion_script).unwrap();
+//! let output = runtime.complete("foo \t\t", &term).unwrap();
+//! # }
+//! ```
+
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg(unix)]
+
 use std::ffi::OsStr;
 use std::ffi::OsString;
 use std::io::Read as _;
@@ -8,9 +29,8 @@ use std::time::Duration;
 
 use ptyprocess::PtyProcess;
 
-use crate::build_path;
-use crate::Runtime;
-use crate::Term;
+pub use completest::Runtime;
+pub use completest::Term;
 
 #[derive(Debug)]
 #[cfg(unix)] // purely for rustdoc to pick it up
@@ -336,11 +356,11 @@ fn comptest(
     // This triggers completion loading process which takes some time in shell so we should let it
     // run for some time
     let mut process = PtyProcess::spawn(command)?;
-    process.set_window_size(term.width, term.height)?;
+    process.set_window_size(term.get_width(), term.get_height())?;
     // for some reason bash does not produce anything with echo disabled...
     process.set_echo(echo, None)?;
 
-    let mut parser = vt100::Parser::new(term.height, term.width, 0);
+    let mut parser = vt100::Parser::new(term.get_height(), term.get_width(), 0);
 
     let mut stream = process.get_raw_handle()?;
     // pass the completion input
@@ -392,4 +412,13 @@ fn comptest(
         .collect::<Vec<_>>()
         .join("\n");
     Ok(content)
+}
+
+fn build_path(bin_root: PathBuf) -> OsString {
+    let mut path = bin_root.into_os_string();
+    if let Some(existing) = std::env::var_os("PATH") {
+        path.push(":");
+        path.push(existing);
+    }
+    path
 }

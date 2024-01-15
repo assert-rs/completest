@@ -1,3 +1,23 @@
+//! Run completions for your program
+//!
+//! # Example
+//!
+//! ```rust,no_run
+//! # #[cfg(unix)] {
+//! # use std::path::Path;
+//! # let bin_root = Path::new("").to_owned();
+//! # let completion_script = "";
+//! # let home = std::env::current_dir().unwrap();
+//! let term = completest_nu::Term::new();
+//!
+//! let mut runtime = completest_nu::NuRuntime::new(bin_root, home).unwrap();
+//! runtime.register("foo", completion_script).unwrap();
+//! let output = runtime.complete("foo \t\t", &term).unwrap();
+//! # }
+//! ```
+
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+
 use std::ffi::OsStr;
 use std::ffi::OsString;
 use std::path::Path;
@@ -13,15 +33,13 @@ use nu_protocol::{
 };
 use reedline::Completer;
 
-use crate::build_path;
-use crate::Runtime;
-use crate::Term;
+pub use completest::Runtime;
+pub use completest::Term;
 
 /// Nushell runtime
 ///
 /// > **WARNING:** This will call `std::env::set_current_dir`
 #[derive(Debug)]
-#[cfg(feature = "nu")] // purely for rustdoc to pick it up
 pub struct NuRuntime {
     path: OsString,
     home: PathBuf,
@@ -93,7 +111,7 @@ impl NuRuntime {
         let _ = writeln!(&mut buffer, "% {input}");
         for suggestion in &suggestions {
             let value = &suggestion.value;
-            let max_descr_len = (term.width as usize) - max_value_len - spacer.len();
+            let max_descr_len = (term.get_width() as usize) - max_value_len - spacer.len();
             let descr = suggestion
                 .description
                 .as_deref()
@@ -226,4 +244,13 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
         .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
 
     Ok((engine_state, stack))
+}
+
+fn build_path(bin_root: PathBuf) -> OsString {
+    let mut path = bin_root.into_os_string();
+    if let Some(existing) = std::env::var_os("PATH") {
+        path.push(":");
+        path.push(existing);
+    }
+    path
 }
