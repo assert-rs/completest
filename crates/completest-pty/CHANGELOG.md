@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Breaking Change
+
+- Don't trim whitespace
+
+### Fixes
+
+- Ensure trailing space on completion line is shown
+
 ## [0.4.0] - 2024-01-15
 
 ### Breaking Change
