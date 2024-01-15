@@ -36,6 +36,32 @@ use reedline::Completer;
 pub use completest::Runtime;
 pub use completest::Term;
 
+#[derive(Debug)]
+#[non_exhaustive]
+pub struct NuRuntimeBuilder {}
+
+impl completest::RuntimeBuilder for NuRuntimeBuilder {
+    type Runtime = NuRuntime;
+
+    fn name(&self) -> &'static str {
+        "nu"
+    }
+
+    fn new(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        NuRuntime::new(bin_root, home)
+    }
+
+    fn with_home(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        NuRuntime::with_home(bin_root, home)
+    }
+}
+
 /// Nushell runtime
 ///
 /// > **WARNING:** This will call `std::env::set_current_dir`

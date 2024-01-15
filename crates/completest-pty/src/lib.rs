@@ -33,6 +33,32 @@ pub use completest::Runtime;
 pub use completest::Term;
 
 #[derive(Debug)]
+#[non_exhaustive]
+pub struct ZshRuntimeBuilder {}
+
+impl completest::RuntimeBuilder for ZshRuntimeBuilder {
+    type Runtime = ZshRuntime;
+
+    fn name(&self) -> &'static str {
+        "zsh"
+    }
+
+    fn new(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        ZshRuntime::new(bin_root, home)
+    }
+
+    fn with_home(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        ZshRuntime::with_home(bin_root, home)
+    }
+}
+
+#[derive(Debug)]
 #[cfg(unix)] // purely for rustdoc to pick it up
 pub struct ZshRuntime {
     path: OsString,
@@ -105,6 +131,32 @@ impl Runtime for ZshRuntime {
 
     fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         self.complete(input, term)
+    }
+}
+
+#[derive(Debug)]
+#[non_exhaustive]
+pub struct BashRuntimeBuilder {}
+
+impl completest::RuntimeBuilder for BashRuntimeBuilder {
+    type Runtime = BashRuntime;
+
+    fn name(&self) -> &'static str {
+        "bash"
+    }
+
+    fn new(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        BashRuntime::new(bin_root, home)
+    }
+
+    fn with_home(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        BashRuntime::with_home(bin_root, home)
     }
 }
 
@@ -187,6 +239,32 @@ impl Runtime for BashRuntime {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
+pub struct FishRuntimeBuilder {}
+
+impl completest::RuntimeBuilder for FishRuntimeBuilder {
+    type Runtime = FishRuntime;
+
+    fn name(&self) -> &'static str {
+        "fish"
+    }
+
+    fn new(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        FishRuntime::new(bin_root, home)
+    }
+
+    fn with_home(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        FishRuntime::with_home(bin_root, home)
+    }
+}
+
+#[derive(Debug)]
 #[cfg(unix)] // purely for rustdoc to pick it up
 pub struct FishRuntime {
     path: OsString,
@@ -262,6 +340,32 @@ impl Runtime for FishRuntime {
 
     fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         self.complete(input, term)
+    }
+}
+
+#[derive(Debug)]
+#[non_exhaustive]
+pub struct ElvishRuntimeBuilder {}
+
+impl completest::RuntimeBuilder for ElvishRuntimeBuilder {
+    type Runtime = ElvishRuntime;
+
+    fn name(&self) -> &'static str {
+        "elvish"
+    }
+
+    fn new(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        ElvishRuntime::new(bin_root, home)
+    }
+
+    fn with_home(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime> {
+        ElvishRuntime::with_home(bin_root, home)
     }
 }
 

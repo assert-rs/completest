@@ -46,6 +46,21 @@ impl Default for Term {
     }
 }
 
+pub trait RuntimeBuilder: std::fmt::Debug {
+    type Runtime: Runtime;
+
+    fn name(&self) -> &'static str;
+
+    fn new(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime>;
+    fn with_home(
+        bin_root: std::path::PathBuf,
+        home: std::path::PathBuf,
+    ) -> std::io::Result<Self::Runtime>;
+}
+
 pub trait Runtime: std::fmt::Debug {
     fn name(&self) -> &'static str;
 
