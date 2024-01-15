@@ -19,7 +19,7 @@ include = [
 
 [package]
 name = "completest"
-version = "0.3.0"
+version = "0.3.1"
 description = "Run completions for your program"
 repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]
