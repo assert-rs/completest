@@ -1,6 +1,6 @@
 [package]
 name = "completest-pty"
-version = "0.2.0"
+version = "0.3.0"
 description = "Run completions for your program"
 repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]
@@ -24,7 +24,7 @@ pre-release-replacements = [
 ]
 
 [dependencies]
-completest = { version = "0.2.0", path = "../../" }
+completest = { version = "0.3.0", path = "../../" }
 
 [target.'cfg(unix)'.dependencies]
 ptyprocess = "0.4.1"
