@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
-### Breaking Changes
+### Breaking Change
 
-- Switch this to be for core types, see instead `completest-nu` and `completest-pty`
+- Split out from `completest`
 
 ## [0.2.0] - 2024-01-02
 

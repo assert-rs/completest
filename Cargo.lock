@@ -408,7 +408,12 @@ checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 [[package]]
 name = "completest"
 version = "0.2.0"
+
+[[package]]
+name = "completest-nu"
+version = "0.1.0"
 dependencies = [
+ "completest",
  "dunce",
  "nu-cli",
  "nu-cmd-lang",
@@ -416,8 +421,15 @@ dependencies = [
  "nu-parser",
  "nu-protocol",
  "nu-test-support",
- "ptyprocess",
  "reedline",
+]
+
+[[package]]
+name = "completest-pty"
+version = "0.1.0"
+dependencies = [
+ "completest",
+ "ptyprocess",
  "vt100",
 ]
 

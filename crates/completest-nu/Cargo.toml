@@ -1,26 +1,6 @@
-[workspace]
-resolver = "2"
-members = [ "crates/*"]
-
-[workspace.package]
-license = "MIT OR Apache-2.0"
-edition = "2021"
-rust-version = "1.70.0"  # MSRV
-include = [
-  "build.rs",
-  "src/**/*",
-  "Cargo.toml",
-  "Cargo.lock",
-  "LICENSE*",
-  "README.md",
-  "benches/**/*",
-  "examples/**/*"
-]
-
 [package]
-name = "completest"
-version = "0.2.0"
-description = "Run completions for your program"
+name = "completest-nu"
+version = "0.1.0"
 repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]
 keywords = ["completion"]
@@ -41,3 +21,16 @@ pre-release-replacements = [
   {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n## [Unreleased] - ReleaseDate\n", exactly=1},
   {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: https://github.com/assert-rs/completest/compare/{{tag_name}}...HEAD", exactly=1},
 ]
+
+[dependencies]
+completest = { version = "0.2.0", path = "../../" }
+dunce = "1.0.4"
+nu-cli = "0.88.1"
+nu-command = "0.88.1"
+nu-parser = "0.88.1"
+nu-protocol = "0.88.1"
+nu-test-support = "0.88.1"
+nu-cmd-lang = "0.88.1"
+reedline = "0.27.1"
+
+[dev-dependencies]
