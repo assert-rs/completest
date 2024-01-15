@@ -49,7 +49,7 @@ impl Default for Term {
 pub trait RuntimeBuilder: std::fmt::Debug {
     type Runtime: Runtime;
 
-    fn name(&self) -> &'static str;
+    fn name() -> &'static str;
 
     fn new(
         bin_root: std::path::PathBuf,
@@ -62,8 +62,6 @@ pub trait RuntimeBuilder: std::fmt::Debug {
 }
 
 pub trait Runtime: std::fmt::Debug {
-    fn name(&self) -> &'static str;
-
     fn home(&self) -> &std::path::Path;
 
     /// Register a completion script
