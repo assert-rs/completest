@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Breaking Change
+
+- Allow using `RuntimeBuilder` statically
+
 ## [0.3.1] - 2024-01-15
 
 ### Features
