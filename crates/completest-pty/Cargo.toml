@@ -31,3 +31,6 @@ ptyprocess = "0.4.1"
 vt100 = "0.15.2"
 
 [dev-dependencies]
+
+[lints]
+workspace = true

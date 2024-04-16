@@ -35,3 +35,6 @@ nu-cmd-lang = "0.88.1"
 reedline = "0.27.1"
 
 [dev-dependencies]
+
+[lints]
+workspace = true

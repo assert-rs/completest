@@ -17,6 +17,9 @@
 //! ```
 
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![warn(missing_docs)]
+#![warn(clippy::print_stderr)]
+#![warn(clippy::print_stdout)]
 #![cfg(unix)]
 
 use std::ffi::OsStr;
@@ -33,6 +36,7 @@ pub use completest::Runtime;
 pub use completest::RuntimeBuilder;
 pub use completest::Term;
 
+/// Abstract factory for [`ZshRuntime`]
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct ZshRuntimeBuilder {}
@@ -44,21 +48,16 @@ impl RuntimeBuilder for ZshRuntimeBuilder {
         "zsh"
     }
 
-    fn new(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         ZshRuntime::new(bin_root, home)
     }
 
-    fn with_home(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         ZshRuntime::with_home(bin_root, home)
     }
 }
 
+/// Zsh runtime
 #[derive(Debug)]
 #[cfg(unix)] // purely for rustdoc to pick it up
 pub struct ZshRuntime {
@@ -68,6 +67,7 @@ pub struct ZshRuntime {
 }
 
 impl ZshRuntime {
+    /// Initialize a new runtime's home
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         std::fs::create_dir_all(&home)?;
 
@@ -86,6 +86,7 @@ PROMPT='%% '
         Self::with_home(bin_root, home)
     }
 
+    /// Reuse an existing runtime's home
     pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let path = build_path(bin_root);
 
@@ -96,6 +97,7 @@ PROMPT='%% '
         })
     }
 
+    /// Location of the runtime's home directory
     pub fn home(&self) -> &std::path::Path {
         &self.home
     }
@@ -103,7 +105,7 @@ PROMPT='%% '
     /// Register a completion script
     pub fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("zsh/_{name}"));
-        std::fs::create_dir_all(path.parent().unwrap())?;
+        std::fs::create_dir_all(path.parent().expect("path created with parent"))?;
         std::fs::write(path, content)
     }
 
@@ -131,6 +133,7 @@ impl Runtime for ZshRuntime {
     }
 }
 
+/// Abstract factory for [`BashRuntime`]
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct BashRuntimeBuilder {}
@@ -142,21 +145,16 @@ impl RuntimeBuilder for BashRuntimeBuilder {
         "bash"
     }
 
-    fn new(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         BashRuntime::new(bin_root, home)
     }
 
-    fn with_home(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         BashRuntime::with_home(bin_root, home)
     }
 }
 
+/// Bash runtime
 #[derive(Debug)]
 #[cfg(unix)] // purely for rustdoc to pick it up
 pub struct BashRuntime {
@@ -167,6 +165,7 @@ pub struct BashRuntime {
 }
 
 impl BashRuntime {
+    /// Initialize a new runtime's home
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         std::fs::create_dir_all(&home)?;
 
@@ -175,12 +174,14 @@ impl BashRuntime {
 PS1='% '
 . /etc/bash_completion
 "
-        .to_string();
+        .to_owned();
         std::fs::write(config_path, config)?;
 
         Self::with_home(bin_root, home)
     }
 
+    /// Reuse an existing runtime's home
+    /// Reuse an existing runtime's home
     pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join(".bashrc");
         let path = build_path(bin_root);
@@ -193,6 +194,7 @@ PS1='% '
         })
     }
 
+    /// Location of the runtime's home directory
     pub fn home(&self) -> &std::path::Path {
         &self.home
     }
@@ -231,6 +233,7 @@ impl Runtime for BashRuntime {
     }
 }
 
+/// Abstract factory for [`FishRuntime`]
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct FishRuntimeBuilder {}
@@ -242,21 +245,16 @@ impl RuntimeBuilder for FishRuntimeBuilder {
         "fish"
     }
 
-    fn new(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         FishRuntime::new(bin_root, home)
     }
 
-    fn with_home(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         FishRuntime::with_home(bin_root, home)
     }
 }
 
+/// Fish runtime
 #[derive(Debug)]
 #[cfg(unix)] // purely for rustdoc to pick it up
 pub struct FishRuntime {
@@ -266,6 +264,7 @@ pub struct FishRuntime {
 }
 
 impl FishRuntime {
+    /// Initialize a new runtime's home
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         std::fs::create_dir_all(&home)?;
 
@@ -279,13 +278,14 @@ function fish_prompt
     printf '%% '
 end;
 "
-        .to_string();
-        std::fs::create_dir_all(config_path.parent().unwrap())?;
+        .to_owned();
+        std::fs::create_dir_all(config_path.parent().expect("path created with parent"))?;
         std::fs::write(config_path, config)?;
 
         Self::with_home(bin_root, home)
     }
 
+    /// Reuse an existing runtime's home
     pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let path = build_path(bin_root);
 
@@ -296,6 +296,7 @@ end;
         })
     }
 
+    /// Location of the runtime's home directory
     pub fn home(&self) -> &std::path::Path {
         &self.home
     }
@@ -303,7 +304,7 @@ end;
     /// Register a completion script
     pub fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("fish/completions/{name}.fish"));
-        std::fs::create_dir_all(path.parent().unwrap())?;
+        std::fs::create_dir_all(path.parent().expect("path created with parent"))?;
         std::fs::write(path, content)
     }
 
@@ -332,6 +333,7 @@ impl Runtime for FishRuntime {
     }
 }
 
+/// Abstract factory for [`ElvishRuntime`]
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct ElvishRuntimeBuilder {}
@@ -343,21 +345,16 @@ impl RuntimeBuilder for ElvishRuntimeBuilder {
         "elvish"
     }
 
-    fn new(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         ElvishRuntime::new(bin_root, home)
     }
 
-    fn with_home(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         ElvishRuntime::with_home(bin_root, home)
     }
 }
 
+/// Elvish runtime
 #[derive(Debug)]
 #[cfg(unix)] // purely for rustdoc to pick it up
 pub struct ElvishRuntime {
@@ -368,6 +365,7 @@ pub struct ElvishRuntime {
 }
 
 impl ElvishRuntime {
+    /// Initialize a new runtime's home
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         std::fs::create_dir_all(&home)?;
 
@@ -376,13 +374,14 @@ impl ElvishRuntime {
 set edit:rprompt = (constantly \"\")
 set edit:prompt = (constantly \"% \")
 "
-        .to_string();
-        std::fs::create_dir_all(config_path.parent().unwrap())?;
+        .to_owned();
+        std::fs::create_dir_all(config_path.parent().expect("path created with parent"))?;
         std::fs::write(config_path, config)?;
 
         Self::with_home(bin_root, home)
     }
 
+    /// Reuse an existing runtime's home
     pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join("elvish/rc.elv");
         let path = build_path(bin_root);
@@ -395,6 +394,7 @@ set edit:prompt = (constantly \"% \")
         })
     }
 
+    /// Location of the runtime's home directory
     pub fn home(&self) -> &std::path::Path {
         &self.home
     }
@@ -440,6 +440,8 @@ fn comptest(
     term: &Term,
     timeout: Duration,
 ) -> std::io::Result<String> {
+    #![allow(clippy::unwrap_used)] // some unwraps need extra investigation
+
     // spawn a new process, pass it the input was.
     //
     // This triggers completion loading process which takes some time in shell so we should let it
