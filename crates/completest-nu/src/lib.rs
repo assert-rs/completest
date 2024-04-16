@@ -17,6 +17,9 @@
 //! ```
 
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![warn(missing_docs)]
+#![warn(clippy::print_stderr)]
+#![warn(clippy::print_stdout)]
 
 use std::ffi::OsStr;
 use std::ffi::OsString;
@@ -37,6 +40,7 @@ pub use completest::Runtime;
 pub use completest::RuntimeBuilder;
 pub use completest::Term;
 
+/// Abstract factory for [`NuRuntime`]
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct NuRuntimeBuilder {}
@@ -48,17 +52,11 @@ impl RuntimeBuilder for NuRuntimeBuilder {
         "nu"
     }
 
-    fn new(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         NuRuntime::new(bin_root, home)
     }
 
-    fn with_home(
-        bin_root: std::path::PathBuf,
-        home: std::path::PathBuf,
-    ) -> std::io::Result<Self::Runtime> {
+    fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
         NuRuntime::with_home(bin_root, home)
     }
 }
@@ -73,17 +71,19 @@ pub struct NuRuntime {
 }
 
 impl NuRuntime {
+    /// Initialize a new runtime's home
     pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         std::fs::create_dir_all(&home)?;
 
         let config = "";
         let config_path = home.join(".config/nushell/config.nu");
-        std::fs::create_dir_all(config_path.parent().unwrap())?;
+        std::fs::create_dir_all(config_path.parent().expect("path created with a parent"))?;
         std::fs::write(config_path, config)?;
 
         Self::with_home(bin_root, home)
     }
 
+    /// Reuse an existing runtime's home
     pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let bin_root = dunce::canonicalize(bin_root)?;
         let home = dunce::canonicalize(home)?;
@@ -91,7 +91,8 @@ impl NuRuntime {
         Ok(Self { path, home })
     }
 
-    pub fn home(&self) -> &std::path::Path {
+    /// Location of the runtime's home directory
+    pub fn home(&self) -> &Path {
         &self.home
     }
 
@@ -100,7 +101,7 @@ impl NuRuntime {
         let path = self
             .home
             .join(format!(".config/nushell/completions/{name}.nu"));
-        std::fs::create_dir_all(path.parent().unwrap())?;
+        std::fs::create_dir_all(path.parent().expect("path created with a parent"))?;
         std::fs::write(path, content)
     }
 
@@ -112,7 +113,7 @@ impl NuRuntime {
 
         let completion_root = self.home.join(".config/nushell/completions");
         let mut completers = std::collections::BTreeMap::new();
-        for entry in std::fs::read_dir(&completion_root)? {
+        for entry in std::fs::read_dir(completion_root)? {
             let entry = entry?;
             if let Some(stem) = entry
                 .file_name()
@@ -154,7 +155,7 @@ impl NuRuntime {
 }
 
 impl Runtime for NuRuntime {
-    fn home(&self) -> &std::path::Path {
+    fn home(&self) -> &Path {
         self.home()
     }
 
@@ -236,7 +237,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
 
     // Add pwd as env var
     stack.add_env_var(
-        "PWD".to_string(),
+        "PWD".to_owned(),
         Value::String {
             val: pwd.clone(),
             internal_span: nu_protocol::Span::new(0, pwd.len()),
@@ -245,7 +246,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
 
     #[cfg(windows)]
     stack.add_env_var(
-        "Path".to_string(),
+        "Path".to_owned(),
         Value::String {
             val: path,
             internal_span: nu_protocol::Span::new(0, path_len),
@@ -254,7 +255,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
 
     #[cfg(not(windows))]
     stack.add_env_var(
-        "PATH".to_string(),
+        "PATH".to_owned(),
         Value::String {
             val: path,
             internal_span: nu_protocol::Span::new(0, path_len),

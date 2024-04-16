@@ -5,6 +5,9 @@
 //! - completest-nu
 
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![warn(missing_docs)]
+#![warn(clippy::print_stderr)]
+#![warn(clippy::print_stdout)]
 
 /// Terminal that shell's will run completions in
 #[derive(Debug)]
@@ -13,6 +16,7 @@ pub struct Term {
     height: u16,
 }
 
+#[allow(missing_docs)]
 impl Term {
     pub fn new() -> Self {
         Self {
@@ -46,22 +50,29 @@ impl Default for Term {
     }
 }
 
+/// Abstract factory for [`Runtime`]
 pub trait RuntimeBuilder: std::fmt::Debug {
+    /// The [`Runtime`] being built
     type Runtime: Runtime;
 
+    /// Name for the runtime (useful for defining a `home`)
     fn name() -> &'static str;
 
+    /// Initialize a new runtime's home
     fn new(
         bin_root: std::path::PathBuf,
         home: std::path::PathBuf,
     ) -> std::io::Result<Self::Runtime>;
+    /// Reuse an existing runtime's home
     fn with_home(
         bin_root: std::path::PathBuf,
         home: std::path::PathBuf,
     ) -> std::io::Result<Self::Runtime>;
 }
 
+/// Run completions for a shell
 pub trait Runtime: std::fmt::Debug {
+    /// Location of the runtime's home directory
     fn home(&self) -> &std::path::Path;
 
     /// Register a completion script
