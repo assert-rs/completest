@@ -170,12 +170,18 @@ impl BashRuntime {
         std::fs::create_dir_all(&home)?;
 
         let config_path = home.join(".bashrc");
+        let inputrc_path = home.join(".inputrc");
         let config = "\
 PS1='% '
 . /etc/bash_completion
 "
         .to_owned();
         std::fs::write(config_path, config)?;
+        // Ignore ~/.inputrc which may set vi edit mode.
+        std::fs::write(
+            inputrc_path,
+            "# expected empty file to disable loading ~/.inputrc\n",
+        )?;
 
         Self::with_home(bin_root, home)
     }
@@ -211,8 +217,10 @@ PS1='% '
     /// Get the output from typing `input` into the shell
     pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("bash");
+        let inputrc_path = self.home.join(".inputrc");
         command
             .env("PATH", &self.path)
+            .env("INPUTRC", &inputrc_path)
             .args([OsStr::new("--rcfile"), self.config.as_os_str()]);
         let echo = !input.contains("\t\t");
         comptest(command, echo, input, term, self.timeout)
