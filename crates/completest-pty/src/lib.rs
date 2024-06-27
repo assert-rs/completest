@@ -319,8 +319,11 @@ end;
     /// Get the output from typing `input` into the shell
     pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("fish");
+        // fish requires TERM to be set.
+        let env_term = std::env::var_os("TERM").unwrap_or_else(|| "dumb".into());
         command
             .env("PATH", &self.path)
+            .env("TERM", &env_term)
             .env("XDG_CONFIG_HOME", &self.home);
         let echo = false;
         comptest(command, echo, input, term, self.timeout)
