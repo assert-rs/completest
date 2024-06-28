@@ -187,7 +187,6 @@ PS1='% '
     }
 
     /// Reuse an existing runtime's home
-    /// Reuse an existing runtime's home
     pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join(".bashrc");
         let path = build_path(bin_root);
