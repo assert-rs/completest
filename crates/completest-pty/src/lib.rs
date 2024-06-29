@@ -74,7 +74,7 @@ impl ZshRuntime {
         let config_path = home.join(".zshenv");
         let config = "\
 fpath=($fpath $ZDOTDIR/zsh)
-autoload -U +X compinit && compinit
+autoload -U +X compinit && compinit -u # bypass compaudit security checking
 precmd_functions=\"\"  # avoid the prompt being overwritten
 PS1='%% '
 PROMPT='%% '
@@ -170,17 +170,22 @@ impl BashRuntime {
         std::fs::create_dir_all(&home)?;
 
         let config_path = home.join(".bashrc");
+        let inputrc_path = home.join(".inputrc");
         let config = "\
 PS1='% '
 . /etc/bash_completion
 "
         .to_owned();
         std::fs::write(config_path, config)?;
+        // Ignore ~/.inputrc which may set vi edit mode.
+        std::fs::write(
+            inputrc_path,
+            "# expected empty file to disable loading ~/.inputrc\n",
+        )?;
 
         Self::with_home(bin_root, home)
     }
 
-    /// Reuse an existing runtime's home
     /// Reuse an existing runtime's home
     pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
         let config_path = home.join(".bashrc");
@@ -211,8 +216,10 @@ PS1='% '
     /// Get the output from typing `input` into the shell
     pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("bash");
+        let inputrc_path = self.home.join(".inputrc");
         command
             .env("PATH", &self.path)
+            .env("INPUTRC", &inputrc_path)
             .args([OsStr::new("--rcfile"), self.config.as_os_str()]);
         let echo = !input.contains("\t\t");
         comptest(command, echo, input, term, self.timeout)
@@ -311,8 +318,11 @@ end;
     /// Get the output from typing `input` into the shell
     pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("fish");
+        // fish requires TERM to be set.
+        let env_term = std::env::var_os("TERM").unwrap_or_else(|| "dumb".into());
         command
             .env("PATH", &self.path)
+            .env("TERM", &env_term)
             .env("XDG_CONFIG_HOME", &self.home);
         let echo = false;
         comptest(command, echo, input, term, self.timeout)
