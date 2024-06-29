@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.4.1] - 2024-06-29
+
 ## [0.4.0] - 2024-01-15
 
 ### Breaking Change
@@ -92,7 +94,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.1] - 2023-07-20
 
 <!-- next-url -->
-[Unreleased]: https://github.com/assert-rs/completest/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/assert-rs/completest/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/assert-rs/completest/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/assert-rs/completest/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/assert-rs/completest/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/assert-rs/completest/compare/v0.2.0...v0.3.0
