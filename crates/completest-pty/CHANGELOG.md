@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- *(bash)* Don't load `~/.inputrc`
+
 ## [0.5.0] - 2024-01-15
 
 ### Breaking Change
