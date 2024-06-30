@@ -113,7 +113,10 @@ PROMPT='%% '
     pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("zsh");
         command.arg("--noglobalrcs");
-        command.env("PATH", &self.path).env("ZDOTDIR", &self.home);
+        command
+            .env("PATH", &self.path)
+            .env("TERM", "xterm")
+            .env("ZDOTDIR", &self.home);
         let echo = false;
         comptest(command, echo, input, term, self.timeout)
     }
@@ -219,6 +222,7 @@ PS1='% '
         let inputrc_path = self.home.join(".inputrc");
         command
             .env("PATH", &self.path)
+            .env("TERM", "xterm")
             .env("INPUTRC", &inputrc_path)
             .args([OsStr::new("--rcfile"), self.config.as_os_str()]);
         let echo = !input.contains("\t\t");
@@ -318,11 +322,10 @@ end;
     /// Get the output from typing `input` into the shell
     pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
         let mut command = Command::new("fish");
-        // fish requires TERM to be set.
-        let env_term = std::env::var_os("TERM").unwrap_or_else(|| "dumb".into());
         command
             .env("PATH", &self.path)
-            .env("TERM", &env_term)
+            // fish requires TERM to be set.
+            .env("TERM", "xterm")
             .env("XDG_CONFIG_HOME", &self.home);
         let echo = false;
         comptest(command, echo, input, term, self.timeout)
