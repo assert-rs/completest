@@ -2,7 +2,7 @@
 name = "completest-pty"
 version = "0.5.1"
 description = "Run completions for your program"
-repository = "https://github.com/assert-rs/completest"
+repository = "https://github.com/shannmu/completest"
 categories = ["command-line-interface"]
 keywords = ["completion"]
 license.workspace = true
