@@ -480,7 +480,7 @@ impl PowershellRuntime {
         std::fs::create_dir_all(&home)?;
 
         let config_path = home.join("powershell/Microsoft.PowerShell_profile.ps1");
-        let config = "$null = $Host.UI.RawUI.ReadKey(\"NoEcho,IncludeKeyDown\")
+        let config = "$null = $Host.UI.RawUI.ReadKey(\"NoEcho\")
 function prompt {
     '% '
 }
@@ -525,7 +525,8 @@ function prompt {
 
         command
             .env("PATH", &self.path)
-            .env("XDG_CONFIG_HOME", &self.home);
+            .env("XDG_CONFIG_HOME", &self.home)
+            .arg("--nologo");
         let echo = false;
         comptest(command, echo, input, term, self.timeout)
     }
