@@ -480,10 +480,10 @@ impl PowershellRuntime {
         std::fs::create_dir_all(&home)?;
 
         let config_path = home.join("powershell/Microsoft.PowerShell_profile.ps1");
-        let config = "$null = $Host.UI.RawUI.ReadKey(\"NoEcho\")
-function prompt {
+        let config = "function prompt {
     '% '
 }
+. powershell/completion.ps1
 "
         .to_owned();
         std::fs::create_dir_all(config_path.parent().expect("path created with parent"))?;
@@ -512,11 +512,9 @@ function prompt {
 
     /// Register a completion script
     pub fn register(&mut self, _name: &str, content: &str) -> std::io::Result<()> {
-        let mut file = std::fs::OpenOptions::new()
-            .append(true)
-            .open(&self.config)?;
-        writeln!(&mut file, "{content}")?;
-        Ok(())
+        let path = self.home.join(format!("powershell/completion.ps1"));
+        std::fs::create_dir_all(path.parent().expect("path created with parent"))?;
+        std::fs::write(path, content)
     }
 
     /// Get the output from typing `input` into the shell
