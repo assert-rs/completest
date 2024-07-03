@@ -452,7 +452,7 @@ impl RuntimeBuilder for PowershellRuntimeBuilder {
     type Runtime = PowershellRuntime;
 
     fn name() -> &'static str {
-        "pwsh"
+        "powershell"
     }
 
     fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
