@@ -24,6 +24,7 @@
 
 use std::ffi::OsStr;
 use std::ffi::OsString;
+use std::fs::OpenOptions;
 use std::io::Read as _;
 use std::io::Write as _;
 use std::path::PathBuf;
@@ -31,6 +32,7 @@ use std::process::Command;
 use std::time::Duration;
 
 use ptyprocess::PtyProcess;
+use tempfile::NamedTempFile;
 
 pub use completest::Runtime;
 pub use completest::RuntimeBuilder;
@@ -483,7 +485,7 @@ impl PowershellRuntime {
         let config = "function prompt {
     '% '
 }
-. powershell/completion.ps1
+Set-PSReadLineOption -PredictionSource None
 "
         .to_owned();
         std::fs::create_dir_all(config_path.parent().expect("path created with parent"))?;
@@ -512,9 +514,28 @@ impl PowershellRuntime {
 
     /// Register a completion script
     pub fn register(&mut self, _name: &str, content: &str) -> std::io::Result<()> {
-        let path = self.home.join(format!("powershell/completion.ps1"));
-        std::fs::create_dir_all(path.parent().expect("path created with parent"))?;
-        std::fs::write(path, content)
+        Self::prepend_to_file(self.config.clone(), content)
+    }
+
+    fn prepend_to_file(file_path: PathBuf, new_data: &str) -> std::io::Result<()> {
+        // Open the original file and read its content
+        let mut original_file = OpenOptions::new().read(true).open(&file_path)?;
+        let mut original_content = Vec::new();
+        original_file.read_to_end(&mut original_content)?;
+
+        // Create a temporary file
+        let mut temp_file = NamedTempFile::new()?;
+
+        // Write the new data to the temporary file
+        temp_file.write_all(new_data.as_bytes())?;
+
+        // Write the original content to the temporary file
+        temp_file.write_all(&original_content)?;
+
+        // Persist the temporary file to replace the original file
+        temp_file.persist(&file_path)?;
+
+        Ok(())
     }
 
     /// Get the output from typing `input` into the shell
