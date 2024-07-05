@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- Ensure `TERM` is for specifying how our pseudo-pty works
+
 ## [0.5.1] - 2024-06-29
 
 ### Fixes
