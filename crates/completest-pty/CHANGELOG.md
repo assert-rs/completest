@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.5.2] - 2024-07-05
+
 ### Fixes
 
 - Ensure `TERM` is for specifying how our pseudo-pty works
@@ -112,7 +114,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.1] - 2023-07-20
 
 <!-- next-url -->
-[Unreleased]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.1...HEAD
+[Unreleased]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.2...HEAD
+[0.5.2]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.1...completest-pty-v0.5.2
 [0.5.1]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.0...completest-pty-v0.5.1
 [0.5.0]: https://github.com/assert-rs/completest/compare/completest-pty-v0.4.0...completest-pty-v0.5.0
 [0.4.0]: https://github.com/assert-rs/completest/compare/completest-pty-v0.3.1...completest-pty-v0.4.0
