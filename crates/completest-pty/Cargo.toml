@@ -2,7 +2,7 @@
 name = "completest-pty"
 version = "0.5.2"
 description = "Run completions for your program"
-repository = "https://github.com/assert-rs/completest"
+repository = "https://github.com/shannmu/completest"
 categories = ["command-line-interface"]
 keywords = ["completion"]
 license.workspace = true
@@ -25,6 +25,7 @@ pre-release-replacements = [
 
 [dependencies]
 completest = { version = "0.4.0", path = "../../" }
+tempfile = "3.10.1"
 
 [target.'cfg(unix)'.dependencies]
 ptyprocess = "0.4.1"

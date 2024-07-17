@@ -24,6 +24,7 @@
 
 use std::ffi::OsStr;
 use std::ffi::OsString;
+use std::fs::OpenOptions;
 use std::io::Read as _;
 use std::io::Write as _;
 use std::path::PathBuf;
@@ -31,6 +32,7 @@ use std::process::Command;
 use std::time::Duration;
 
 use ptyprocess::PtyProcess;
+use tempfile::NamedTempFile;
 
 pub use completest::Runtime;
 pub use completest::RuntimeBuilder;
@@ -433,6 +435,126 @@ set edit:prompt = (constantly \"% \")
 }
 
 impl Runtime for ElvishRuntime {
+    fn home(&self) -> &std::path::Path {
+        self.home()
+    }
+
+    fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
+        self.register(name, content)
+    }
+
+    fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
+        self.complete(input, term)
+    }
+}
+
+/// Abstract factory for [`PowershellRuntime`]
+#[derive(Debug)]
+#[non_exhaustive]
+pub struct PowershellRuntimeBuilder {}
+
+impl RuntimeBuilder for PowershellRuntimeBuilder {
+    type Runtime = PowershellRuntime;
+
+    fn name() -> &'static str {
+        "powershell"
+    }
+
+    fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
+        PowershellRuntime::new(bin_root, home)
+    }
+
+    fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self::Runtime> {
+        PowershellRuntime::with_home(bin_root, home)
+    }
+}
+
+/// Powershel runtime
+#[derive(Debug)]
+#[cfg(unix)] // purely for rustdoc to pick it up
+pub struct PowershellRuntime {
+    path: OsString,
+    home: PathBuf,
+    config: PathBuf,
+    timeout: Duration,
+}
+
+impl PowershellRuntime {
+    /// Initialize a new runtime's home
+    pub fn new(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        std::fs::create_dir_all(&home)?;
+
+        let config_path = home.join("powershell/Microsoft.PowerShell_profile.ps1");
+        let config = "function prompt {
+    '% '
+}
+Set-PSReadLineOption -PredictionSource None
+"
+        .to_owned();
+        std::fs::create_dir_all(config_path.parent().expect("path created with parent"))?;
+        std::fs::write(config_path, config)?;
+
+        Self::with_home(bin_root, home)
+    }
+
+    /// Reuse an existing runtime's home
+    pub fn with_home(bin_root: PathBuf, home: PathBuf) -> std::io::Result<Self> {
+        let config_path = home.join("powershell/Microsoft.PowerShell_profile.ps1");
+        let path = build_path(bin_root);
+
+        Ok(Self {
+            path,
+            home,
+            config: config_path,
+            timeout: Duration::from_millis(50),
+        })
+    }
+
+    /// Location of the runtime's home directory
+    pub fn home(&self) -> &std::path::Path {
+        &self.home
+    }
+
+    /// Register a completion script
+    pub fn register(&mut self, _name: &str, content: &str) -> std::io::Result<()> {
+        Self::prepend_to_file(self.config.clone(), content)
+    }
+
+    fn prepend_to_file(file_path: PathBuf, new_data: &str) -> std::io::Result<()> {
+        // Open the original file and read its content
+        let mut original_file = OpenOptions::new().read(true).open(&file_path)?;
+        let mut original_content = Vec::new();
+        original_file.read_to_end(&mut original_content)?;
+
+        // Create a temporary file
+        let mut temp_file = NamedTempFile::new()?;
+
+        // Write the new data to the temporary file
+        temp_file.write_all(new_data.as_bytes())?;
+
+        // Write the original content to the temporary file
+        temp_file.write_all(&original_content)?;
+
+        // Persist the temporary file to replace the original file
+        temp_file.persist(&file_path)?;
+
+        Ok(())
+    }
+
+    /// Get the output from typing `input` into the shell
+    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
+        let mut command = Command::new("pwsh");
+
+        command
+            .env("PATH", &self.path)
+            .env("XDG_CONFIG_HOME", &self.home)
+            .arg("--nologo");
+        let echo = false;
+        comptest(command, echo, input, term, self.timeout)
+    }
+}
+
+impl Runtime for PowershellRuntime {
     fn home(&self) -> &std::path::Path {
         self.home()
     }
