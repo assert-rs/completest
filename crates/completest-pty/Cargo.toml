@@ -2,9 +2,9 @@
 name = "completest-pty"
 version = "0.5.3"
 description = "Run completions for your program"
-repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]
 keywords = ["completion"]
+repository.workspace = true
 license.workspace = true
 edition.workspace = true
 rust-version.workspace = true
