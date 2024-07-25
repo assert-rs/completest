@@ -407,11 +407,11 @@ checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
 name = "completest"
-version = "0.4.1"
+version = "0.4.2"
 
 [[package]]
 name = "completest-nu"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
  "completest",
  "dunce",
@@ -426,7 +426,7 @@ dependencies = [
 
 [[package]]
 name = "completest-pty"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "completest",
  "ptyprocess",

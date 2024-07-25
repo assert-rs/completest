@@ -88,7 +88,7 @@ zero_sized_map_values = "warn"
 
 [package]
 name = "completest"
-version = "0.4.1"
+version = "0.4.2"
 description = "Run completions for your program"
 repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]

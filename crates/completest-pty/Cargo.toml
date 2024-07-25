@@ -1,6 +1,6 @@
 [package]
 name = "completest-pty"
-version = "0.5.2"
+version = "0.5.3"
 description = "Run completions for your program"
 repository = "https://github.com/assert-rs/completest"
 categories = ["command-line-interface"]
