@@ -102,6 +102,11 @@ PROMPT='%% '
         &self.home
     }
 
+    /// Set the timeout for completion
+    pub fn timeout(&mut self, timeout: Duration) {
+        self.timeout = timeout;
+    }
+
     /// Register a completion script
     pub fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("zsh/_{name}"));
@@ -110,7 +115,12 @@ PROMPT='%% '
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(
+        &mut self,
+        input: &str,
+        term: &Term,
+        timeout: Duration,
+    ) -> std::io::Result<String> {
         let mut command = Command::new("zsh");
         command.arg("--noglobalrcs");
         command
@@ -118,7 +128,7 @@ PROMPT='%% '
             .env("TERM", "xterm")
             .env("ZDOTDIR", &self.home);
         let echo = false;
-        comptest(command, echo, input, term, self.timeout)
+        comptest(command, echo, input, term, timeout)
     }
 }
 
@@ -132,7 +142,7 @@ impl Runtime for ZshRuntime {
     }
 
     fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
-        self.complete(input, term)
+        self.complete(input, term, self.timeout)
     }
 }
 
@@ -207,6 +217,11 @@ PS1='% '
         &self.home
     }
 
+    /// Set the timeout for completion
+    pub fn timeout(&mut self, timeout: Duration) {
+        self.timeout = timeout;
+    }
+
     /// Register a completion script
     pub fn register(&mut self, _name: &str, content: &str) -> std::io::Result<()> {
         let mut file = std::fs::OpenOptions::new()
@@ -217,7 +232,12 @@ PS1='% '
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(
+        &mut self,
+        input: &str,
+        term: &Term,
+        timeout: Duration,
+    ) -> std::io::Result<String> {
         let mut command = Command::new("bash");
         let inputrc_path = self.home.join(".inputrc");
         command
@@ -226,7 +246,7 @@ PS1='% '
             .env("INPUTRC", &inputrc_path)
             .args([OsStr::new("--rcfile"), self.config.as_os_str()]);
         let echo = !input.contains("\t\t");
-        comptest(command, echo, input, term, self.timeout)
+        comptest(command, echo, input, term, timeout)
     }
 }
 
@@ -240,7 +260,7 @@ impl Runtime for BashRuntime {
     }
 
     fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
-        self.complete(input, term)
+        self.complete(input, term, self.timeout)
     }
 }
 
@@ -312,6 +332,11 @@ end;
         &self.home
     }
 
+    /// Set the timeout for completion
+    pub fn timeout(&mut self, timeout: Duration) {
+        self.timeout = timeout;
+    }
+
     /// Register a completion script
     pub fn register(&mut self, name: &str, content: &str) -> std::io::Result<()> {
         let path = self.home.join(format!("fish/completions/{name}.fish"));
@@ -320,7 +345,12 @@ end;
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(
+        &mut self,
+        input: &str,
+        term: &Term,
+        timeout: Duration,
+    ) -> std::io::Result<String> {
         let mut command = Command::new("fish");
         command
             .env("PATH", &self.path)
@@ -328,7 +358,7 @@ end;
             .env("TERM", "xterm")
             .env("XDG_CONFIG_HOME", &self.home);
         let echo = false;
-        comptest(command, echo, input, term, self.timeout)
+        comptest(command, echo, input, term, timeout)
     }
 }
 
@@ -342,7 +372,7 @@ impl Runtime for FishRuntime {
     }
 
     fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
-        self.complete(input, term)
+        self.complete(input, term, self.timeout)
     }
 }
 
@@ -412,6 +442,11 @@ set edit:prompt = (constantly \"% \")
         &self.home
     }
 
+    /// Set the timeout for completion
+    pub fn timeout(&mut self, timeout: Duration) {
+        self.timeout = timeout;
+    }
+
     /// Register a completion script
     pub fn register(&mut self, _name: &str, content: &str) -> std::io::Result<()> {
         let mut file = std::fs::OpenOptions::new()
@@ -422,13 +457,18 @@ set edit:prompt = (constantly \"% \")
     }
 
     /// Get the output from typing `input` into the shell
-    pub fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
+    pub fn complete(
+        &mut self,
+        input: &str,
+        term: &Term,
+        timeout: Duration,
+    ) -> std::io::Result<String> {
         let mut command = Command::new("elvish");
         command
             .env("PATH", &self.path)
             .env("XDG_CONFIG_HOME", &self.home);
         let echo = false;
-        comptest(command, echo, input, term, self.timeout)
+        comptest(command, echo, input, term, timeout)
     }
 }
 
@@ -442,7 +482,7 @@ impl Runtime for ElvishRuntime {
     }
 
     fn complete(&mut self, input: &str, term: &Term) -> std::io::Result<String> {
-        self.complete(input, term)
+        self.complete(input, term, self.timeout)
     }
 }
 
