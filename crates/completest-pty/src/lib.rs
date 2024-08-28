@@ -480,16 +480,7 @@ fn comptest(
             // since we don't know when exactly shell is done completing the idea is to wait until
             // something at all is produced, then wait for some duration since the last produced chunk.
             rcv.recv().unwrap();
-            loop {
-                std::thread::sleep(timeout);
-                let mut cnt = 0;
-                while rcv.try_recv().is_ok() {
-                    cnt += 1;
-                }
-                if cnt == 0 {
-                    break;
-                }
-            }
+            while rcv.recv_timeout(timeout).is_ok() {}
             shutdown_ref.store(true, std::sync::atomic::Ordering::SeqCst);
             process.exit(false).unwrap();
         });
