@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Performance
+
+- Reduce completion-done detection overhead
+
 ## [0.5.3] - 2024-07-25
 
 ## [0.5.2] - 2024-07-05
