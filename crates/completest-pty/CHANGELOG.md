@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.5.4] - 2024-08-28
+
 ### Performance
 
 - Reduce completion-done detection overhead
@@ -120,7 +122,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.1] - 2023-07-20
 
 <!-- next-url -->
-[Unreleased]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.3...HEAD
+[Unreleased]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.4...HEAD
+[0.5.4]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.3...completest-pty-v0.5.4
 [0.5.3]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.2...completest-pty-v0.5.3
 [0.5.2]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.1...completest-pty-v0.5.2
 [0.5.1]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.0...completest-pty-v0.5.1
