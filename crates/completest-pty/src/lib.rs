@@ -224,7 +224,11 @@ PS1='% '
             .env("PATH", &self.path)
             .env("TERM", "xterm")
             .env("INPUTRC", &inputrc_path)
-            .args([OsStr::new("--rcfile"), self.config.as_os_str()]);
+            .args([
+                OsStr::new("--noprofile"),
+                OsStr::new("--rcfile"),
+                self.config.as_os_str(),
+            ]);
         let echo = !input.contains("\t\t");
         comptest(command, echo, input, term, self.timeout)
     }
