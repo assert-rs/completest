@@ -426,7 +426,7 @@ dependencies = [
 
 [[package]]
 name = "completest-pty"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
  "completest",
  "ptyprocess",
