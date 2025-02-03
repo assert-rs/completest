@@ -8,6 +8,10 @@
 #![warn(clippy::print_stderr)]
 #![warn(clippy::print_stdout)]
 
+#[doc = include_str!("../README.md")]
+#[cfg(doctest)]
+pub struct ReadmeDoctests;
+
 /// Terminal that shell's will run completions in
 #[derive(Debug)]
 pub struct Term {
