@@ -28,7 +28,7 @@ completest = { version = "0.4.0", path = "../../" }
 
 [target.'cfg(unix)'.dependencies]
 ptyprocess = "0.4.1"
-vt100 = "0.16.0"
+vt100 = "0.16.2"
 
 [dev-dependencies]
 
