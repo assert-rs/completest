@@ -25,7 +25,7 @@ pre-release-replacements = [
 
 [dependencies]
 completest = { version = "0.4.0", path = "../../" }
-dunce = "1.0.4"
+dunce = "1.0.5"
 nu-cli = "0.88.1"
 nu-command = "0.88.1"
 nu-parser = "0.88.1"
