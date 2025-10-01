@@ -27,7 +27,7 @@ pre-release-replacements = [
 completest = { version = "0.4.0", path = "../../" }
 
 [target.'cfg(unix)'.dependencies]
-ptyprocess = "0.4.1"
+ptyprocess = "0.5.0"
 vt100 = "0.16.2"
 
 [dev-dependencies]
