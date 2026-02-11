@@ -1,6 +1,6 @@
 [package]
 name = "completest-pty"
-version = "0.5.5"
+version = "1.0.0"
 description = "Run completions for your program"
 categories = ["command-line-interface"]
 keywords = ["completion"]
@@ -24,7 +24,7 @@ pre-release-replacements = [
 ]
 
 [dependencies]
-completest = { version = "0.4.0", path = "../../" }
+completest = { version = "1.0.0", path = "../../" }
 
 [target.'cfg(unix)'.dependencies]
 ptyprocess = "0.5.0"
