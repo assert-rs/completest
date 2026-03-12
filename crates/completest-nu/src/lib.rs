@@ -31,8 +31,8 @@ use nu_cli::NuCompleter;
 use nu_command::add_shell_command_context;
 use nu_parser::parse;
 use nu_protocol::{
-    engine::{EngineState, Stack, StateWorkingSet},
     Value,
+    engine::{EngineState, Stack, StateWorkingSet},
 };
 use reedline::Completer;
 
