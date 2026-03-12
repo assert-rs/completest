@@ -97,7 +97,7 @@ lto = true
 
 [package]
 name = "completest"
-version = "1.0.0"
+version = "1.1.0"
 description = "Run completions for your program"
 categories = ["command-line-interface"]
 keywords = ["completion"]

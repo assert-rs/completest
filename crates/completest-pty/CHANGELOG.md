@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [1.1.0] - 2026-03-12
+
 ### Compatibiliity
 
 - Bump MSRV to 1.85
@@ -134,7 +136,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [0.0.1] - 2023-07-20
 
 <!-- next-url -->
-[Unreleased]: https://github.com/assert-rs/completest/compare/completest-pty-v1.0.0...HEAD
+[Unreleased]: https://github.com/assert-rs/completest/compare/completest-pty-v1.1.0...HEAD
+[1.1.0]: https://github.com/assert-rs/completest/compare/completest-pty-v1.0.0...completest-pty-v1.1.0
 [1.0.0]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.5...completest-pty-v1.0.0
 [0.5.5]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.4...completest-pty-v0.5.5
 [0.5.4]: https://github.com/assert-rs/completest/compare/completest-pty-v0.5.3...completest-pty-v0.5.4
