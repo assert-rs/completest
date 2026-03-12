@@ -6,7 +6,7 @@ members = [ "crates/*"]
 repository = "https://github.com/assert-rs/completest"
 license = "MIT OR Apache-2.0"
 edition = "2021"
-rust-version = "1.70.0"  # MSRV
+rust-version = "1.85.0"  # MSRV
 include = [
   "build.rs",
   "src/**/*",
