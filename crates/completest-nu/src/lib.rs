@@ -31,8 +31,8 @@ use nu_cli::NuCompleter;
 use nu_command::add_shell_command_context;
 use nu_parser::parse;
 use nu_protocol::{
-    engine::{EngineState, Stack, StateWorkingSet},
     Value,
+    engine::{EngineState, Stack, StateWorkingSet},
 };
 use reedline::Completer;
 
@@ -181,10 +181,7 @@ fn external_completion(
             let mut working_set = StateWorkingSet::new(&engine_state);
             let block = parse(&mut working_set, None, completer.as_bytes(), false);
             if !working_set.parse_errors.is_empty() {
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    working_set.parse_errors.remove(0),
-                ));
+                return Err(std::io::Error::other(working_set.parse_errors.remove(0)));
             }
 
             (block, working_set.render())
@@ -192,19 +189,16 @@ fn external_completion(
 
         engine_state
             .merge_delta(delta)
-            .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
+            .map_err(std::io::Error::other)?;
     }
 
     // Merge environment into the permanent state
     engine_state
         .merge_env(&mut stack, home)
-        .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
+        .map_err(std::io::Error::other)?;
 
     if engine_state.num_blocks() == 0 {
-        return Err(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "completer not registered",
-        ));
+        return Err(std::io::Error::other("completer not registered"));
     }
     let latest_block_id = engine_state.num_blocks() - 1;
 
@@ -265,7 +259,7 @@ fn new_engine(path: &OsStr, home: &Path) -> std::io::Result<(EngineState, Stack)
     // Merge environment into the permanent state
     engine_state
         .merge_env(&mut stack, home)
-        .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
+        .map_err(std::io::Error::other)?;
 
     Ok((engine_state, stack))
 }
