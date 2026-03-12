@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Compatibiliity
+
+- Bump MSRV to 1.85
+
 ## [1.0.0] - 2026-02-11
 
 ## [0.5.5] - 2024-09-04
