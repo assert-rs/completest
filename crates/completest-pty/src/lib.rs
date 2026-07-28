@@ -31,6 +31,11 @@ use std::process::Command;
 use std::time::Duration;
 
 use ptyprocess::PtyProcess;
+use rio_vt::ansi::CursorShape;
+use rio_vt::crosswords::formatter::FormatOptions;
+use rio_vt::crosswords::{Crosswords, CrosswordsSize};
+use rio_vt::event::{VoidListener, WindowId};
+use rio_vt::performer::handler::Processor;
 
 pub use completest::Runtime;
 pub use completest::RuntimeBuilder;
@@ -468,7 +473,15 @@ fn comptest(
     // for some reason bash does not produce anything with echo disabled...
     process.set_echo(echo, None)?;
 
-    let mut parser = vt100::Parser::new(term.get_height(), term.get_width(), 0);
+    let mut vt = Crosswords::new(
+        CrosswordsSize::new(term.get_width() as usize, term.get_height() as usize),
+        CursorShape::Block,
+        VoidListener,
+        WindowId::from(0),
+        0,
+        0,
+    );
+    let mut parser = Processor::default();
 
     let mut stream = process.get_raw_handle()?;
     // pass the completion input
@@ -500,11 +513,11 @@ fn comptest(
                 break;
             }
             let _ = snd.send(());
-            parser.process(buf);
+            parser.advance(&mut vt, buf);
         }
     });
 
-    let content = parser.screen().contents();
+    let content = vt.format(FormatOptions::plain());
     Ok(content)
 }
 
