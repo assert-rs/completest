@@ -19,7 +19,6 @@ pub struct Term {
     height: u16,
 }
 
-#[allow(missing_docs)]
 impl Term {
     pub fn new() -> Self {
         Self {
