@@ -457,8 +457,6 @@ fn comptest(
     term: &Term,
     timeout: Duration,
 ) -> std::io::Result<String> {
-    #![allow(clippy::unwrap_used)] // some unwraps need extra investigation
-
     // spawn a new process, pass it the input was.
     //
     // This triggers completion loading process which takes some time in shell so we should let it
