@@ -330,7 +330,9 @@ end;
             .env("PATH", &self.path)
             // fish requires TERM to be set.
             .env("TERM", "xterm")
-            .env("XDG_CONFIG_HOME", &self.home);
+            .env("XDG_CONFIG_HOME", &self.home)
+            // Workaround for fish v4
+            .env("fish_features", "no-query-term");
         let echo = false;
         comptest(command, echo, input, term, self.timeout)
     }
