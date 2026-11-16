@@ -30,7 +30,6 @@ nu-cli = "0.88.1"
 nu-command = "0.88.1"
 nu-parser = "0.88.1"
 nu-protocol = "0.88.1"
-nu-test-support = "0.88.1"
 nu-cmd-lang = "0.88.1"
 reedline = "0.27.1"
 
