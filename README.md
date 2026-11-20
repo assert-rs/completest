@@ -3,8 +3,8 @@
 > Run completions for your program
 
 [![Documentation](https://img.shields.io/badge/docs-main-blue.svg)][Documentation]
-![License](https://img.shields.io/crates/l/completest.svg)
-[![Crates Status](https://img.shields.io/crates/v/completest.svg)][Crates.io]
+![License](https://img.shields.io/crates/l/PROJECT.svg)
+[![Crates Status](https://img.shields.io/crates/v/PROJECT.svg)][Crates.io]
 
 ## License
 
